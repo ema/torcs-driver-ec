@@ -96,7 +96,8 @@ public class SpamEggsEA {
 		race.addCompetitor(driver2);
 		
 		// Run in Text Mode
-		RaceResults results = race.runWithGUI();
+		RaceResults results = race.run();
+		//RaceResults results = race.runWithGUI();
 		
 		// Fitness = BestLap, except if both did not do at least one lap
 		if( Double.isInfinite(results.get(driver1).bestLapTime) &&  Double.isInfinite(results.get(driver2).bestLapTime)){
