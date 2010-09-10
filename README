@@ -1,0 +1,11 @@
+Spam Eggs TORCS driver
+----------------------
+
+build the jarfile: 
+    ant build
+
+run in cli mode:
+    ant run
+
+show the best lap (GUI):
+    ant show
