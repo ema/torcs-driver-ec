@@ -49,8 +49,6 @@ public class SpamEggsGenomeDriver extends GenomeDriver {
 		if(sensors.getTrackPosition() > trackpos){
 			action.steering =  -1 *  steering * Math.abs(sensors.getTrackPosition());  // steer left
 		}
-		
-		
 	}
 
 	public String getDriverName() {
