@@ -1,0 +1,46 @@
+<project name="ecprac-torcs-spameggs" default="build" basedir=".">
+
+	<property name="base" value="./" />
+	<property name="tmp-dir" 				location="${base}/bin" />
+	<property name="src-dir" 				location="${base}/src" />
+	
+	<property name="target-dir" 			location="${base}" />
+	<property name="jarfile" 				value="SpamEggs.jar" />
+	
+	
+	<target name="init" description="Initialize">
+		<mkdir dir="${tmp-dir}" />
+	</target>
+
+	<target name="compile" description="Compile">
+		<javac destdir="${tmp-dir}" debug="true" srcdir="${src-dir}" >
+			<classpath>
+				    <pathelement path="${base}/ECPRAC-TORCS.jar"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="build" description="Init, Compile, Jar, Clean" depends="init, compile, jar, clean" />
+	
+	<target name="jar" depends="compile" description="Create a jar file">
+		<jar destfile="${target-dir}/${jarfile}" basedir="${tmp-dir}" includes="**/*.*">
+			<manifest> 
+				<attribute name="Main-Class" value="ecprac.era270.SpamEggsEA" /> 
+				<attribute name="Class-Path" value=". ECPRAC-TORCS.jar" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="clean" description="Clean up the build">
+		<delete dir="${tmp-dir}" />
+	</target>
+	
+	<target name="run" description="Run the algorithm">
+		<java jar="${target-dir}/${jarfile}" fork="true" />
+	</target>
+	
+	<target name="show" description="Show the best">
+		<java jar="${target-dir}/${jarfile}" fork="true" args="-show" />
+	</target>
+
+</project>
