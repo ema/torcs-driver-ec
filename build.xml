@@ -13,7 +13,7 @@
 	</target>
 
 	<target name="compile" description="Compile">
-		<javac destdir="${tmp-dir}" debug="true" srcdir="${src-dir}" >
+		<javac destdir="${tmp-dir}" debug="true" srcdir="${src-dir}" includeantruntime="false">
 			<classpath>
 				    <pathelement path="${base}/ECPRAC-TORCS.jar"/>
 			</classpath>
@@ -40,7 +40,9 @@
 	</target>
 	
 	<target name="show" description="Show the best">
-		<java jar="${target-dir}/${jarfile}" fork="true" args="-show" />
+		<java jar="${target-dir}/${jarfile}" fork="true">
+            <arg value="-show" />
+        </java>
 	</target>
 
 </project>
