@@ -114,15 +114,16 @@ public class SpamEggsEA {
         System.out.println("fitness[1]=" + fitness[1]);
     }
     
-    public void show(){
+    public void show() {
         try {
-            
             Race race = new Race();
             race.setTrack(Track.michigan);
             race.setStage(Stage.QUALIFYING);
             race.setTermination(Termination.LAPS, 3);
             
             SpamEggsGenome best = (SpamEggsGenome) Utilities.loadGenome("best.genome");
+            System.out.println("Best genome: " + best);
+
             SpamEggsGenomeDriver driver = new SpamEggsGenomeDriver();
             driver.init();
             driver.loadGenome(best);
