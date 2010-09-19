@@ -6,6 +6,6 @@
 
 while true
 do
-    [ -z "`pgrep torcs`" ] && torcs -T
+    [ -z "`pgrep torcs`" ] && torcs -T -nofuel -nodamage -nolaptime
     sleep .5
 done

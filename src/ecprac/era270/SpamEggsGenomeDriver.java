@@ -37,18 +37,25 @@ public class SpamEggsGenomeDriver extends GenomeDriver {
 	}
 
 	public void control(Action action, SensorModel sensors) {
-
 		if (sensors.getSpeed() < maxSpeed) {
 			action.accelerate = 1;
 		}
-		action.steering = 0;
-		
-		if(sensors.getTrackPosition() < -1 * trackpos){
-			action.steering = steering * Math.abs(sensors.getTrackPosition()); 		// steer right
-		} 
-		if(sensors.getTrackPosition() > trackpos){
-			action.steering =  -1 *  steering * Math.abs(sensors.getTrackPosition());  // steer left
-		}
+
+        int max = 1;
+        double edgeSensors[] = sensors.getTrackEdgeSensors();
+
+        /* finding out the position of the largest distance vector */
+        for (int i=1; i < edgeSensors.length - 1; i++)
+            if (edgeSensors[i] >= edgeSensors[max]) 
+                max = i;
+        /*
+        double d = edgeSensors[max];
+        double dl = edgeSensors[max + 1];
+        double dr = edgeSensors[max - 1];
+        */
+
+        double steeringAmount = 0.1 * max - 0.9;
+		action.steering = steeringAmount;
 	}
 
 	public String getDriverName() {

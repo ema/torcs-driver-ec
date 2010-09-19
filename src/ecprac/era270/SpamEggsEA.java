@@ -117,7 +117,8 @@ public class SpamEggsEA {
     public void show() {
         try {
             Race race = new Race();
-            race.setTrack(Track.michigan);
+            //race.setTrack(Track.michigan);
+            race.setTrack(Track.fromIndex(3));
             race.setStage(Stage.QUALIFYING);
             race.setTermination(Termination.LAPS, 3);
             
