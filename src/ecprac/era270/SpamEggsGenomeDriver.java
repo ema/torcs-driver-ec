@@ -11,10 +11,7 @@ import ecprac.torcs.genome.IGenome;
 
 public class SpamEggsGenomeDriver extends GenomeDriver {
 
-	private int maxSpeed;
-	private double steering;
-	private double trackpos;
-
+	private int[] speed;
 
 	public void init() {
 		enableExtras(new AutomatedClutch());
@@ -27,20 +24,38 @@ public class SpamEggsGenomeDriver extends GenomeDriver {
 
 		if (genome instanceof SpamEggsGenome) {
 			SpamEggsGenome llgenome = (SpamEggsGenome) genome;
-			maxSpeed = llgenome.speed;
-			steering = llgenome.steering;
-			trackpos = llgenome.trackpos;
+			speed = llgenome.speed;
 		} else {
 			System.err.println("Invalid Genome assigned");
 		}
 
 	}
 
-	public void control(Action action, SensorModel sensors) {
-		if (sensors.getSpeed() < maxSpeed) {
-			action.accelerate = 1;
-		}
+    private double getAccel(int targetSpeed, double curSpeed) {
+        double accel = 0;
 
+        if (targetSpeed - curSpeed > 0)
+            accel = (targetSpeed - curSpeed) / 20;
+
+        if (targetSpeed - curSpeed > 20)
+            accel = 1;
+
+        return accel;
+    }
+
+    private double getBrake(int targetSpeed, double curSpeed) {
+        double brake = 0;
+        
+        if (targetSpeed - curSpeed < 0)
+            brake = - (targetSpeed - curSpeed) / 20;
+
+        if (targetSpeed - curSpeed < - 20)
+            brake = 1;
+
+        return brake;
+    }
+
+	public void control(Action action, SensorModel sensors) {
         int max = 1;
         double edgeSensors[] = sensors.getTrackEdgeSensors();
 
@@ -56,6 +71,15 @@ public class SpamEggsGenomeDriver extends GenomeDriver {
 
         double steeringAmount = 0.1 * max - 0.9;
 		action.steering = steeringAmount;
+
+        // 9 - (max % 9)
+        int speedIdx = max;
+        if (speedIdx >= speed.length) {
+            speedIdx = 9 - (speedIdx % 9);
+        }
+
+        action.accelerate = getAccel(speed[speedIdx], sensors.getSpeed());
+        action.brake = getBrake(speed[speedIdx], sensors.getSpeed());
 	}
 
 	public String getDriverName() {

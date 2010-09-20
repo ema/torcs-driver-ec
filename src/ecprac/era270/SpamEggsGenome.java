@@ -4,11 +4,23 @@ import ecprac.torcs.genome.IGenome;
 
 public class SpamEggsGenome implements IGenome {
 	
-	public int speed = 15;
-	public double steering = 0.1;
-	public double trackpos = 0.01;
+	public int[] speed = new int[10];
+
+    public SpamEggsGenome() {
+        int val = 60;
+
+        for (int i=0; i<10; i++) {
+            speed[i] = val;
+            val += 5;
+        }
+    }
 
     public String toString() {
-        return "speed: " + speed + " steering:  " + steering + " trackpos: " + trackpos;
+        String toprint = "";
+        
+        for (int i=0; i<10; i++)
+            toprint += i + ": " + speed[i] + " ";
+
+        return toprint;
     }
 }

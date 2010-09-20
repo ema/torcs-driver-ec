@@ -59,21 +59,25 @@ public class SpamEggsEA {
 
     public void initialize() {
         for (int i = 0; i < 2; i++) {
-            SpamEggsGenome genome = new SpamEggsGenome();
+            SpamEggsGenome genome = mutate(new SpamEggsGenome());
+            /*
             genome.speed = r.nextInt(200);                      // maxspeed = 200
             genome.steering = r.nextDouble();
             genome.trackpos = 0.8 * r.nextDouble();
+            */
             population[i] = genome;
         }
     }
 
     public SpamEggsGenome mutate(SpamEggsGenome genome) {
         SpamEggsGenome genome2 = new SpamEggsGenome();
-        genome2.speed = genome.speed + (int) (r.nextGaussian() * 20);
-        genome2.steering = genome.steering + (0.1 * r.nextGaussian());
-        genome2.trackpos = genome.trackpos + (0.1 * r.nextGaussian());
-        return genome2;
+        double ng = r.nextGaussian() * 10;
 
+        for (int i=0; i<genome.speed.length; i++)
+            genome2.speed[i] = (int)(genome.speed[i] + ng);
+
+        System.out.println("Genome after mutation: " + genome2);
+        return genome2;
     }
     
     public void evaluateAll() {
