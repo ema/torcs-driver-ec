@@ -253,5 +253,17 @@ public class DriversUtils {
 		}
 
 	}
-
+	
+	public static boolean isOffTrack(SensorModel model) {
+		double trackPos = model.getTrackPosition();
+		return trackPos > 1.0 || trackPos < - 1.0;
+	}
+	
+	public static boolean isRightOfAxis(SensorModel model) {
+		return model.getTrackPosition() > 0.0;
+	}
+	
+	public static boolean isLeftOfAxis(SensorModel model) {
+		return !isRightOfAxis(model);
+	}
 }
