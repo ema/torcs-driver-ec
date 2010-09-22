@@ -14,6 +14,7 @@
 
 	<target name="compile" description="Compile">
 		<javac destdir="${tmp-dir}" debug="true" srcdir="${src-dir}" includeantruntime="false">
+            <compilerarg value="-Xlint:unchecked"/>
 			<classpath>
 				    <pathelement path="${base}/ECPRAC-TORCS.jar"/>
 			</classpath>

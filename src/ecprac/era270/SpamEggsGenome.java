@@ -2,9 +2,10 @@ package ecprac.era270;
 
 import ecprac.torcs.genome.IGenome;
 
-public class SpamEggsGenome implements IGenome {
+public class SpamEggsGenome implements IGenome, Comparable<SpamEggsGenome> {
 	
 	public int[] speed = new int[10];
+    public double fitness;
 
     public SpamEggsGenome() {
         int val = 60;
@@ -22,5 +23,15 @@ public class SpamEggsGenome implements IGenome {
             toprint += i + ": " + speed[i] + " ";
 
         return toprint;
+    }
+
+    public int compareTo(SpamEggsGenome o) {
+        if (fitness < o.fitness)
+            return -1;
+
+        if (fitness > o.fitness)
+            return 1;
+
+        return 0;
     }
 }

@@ -3,6 +3,9 @@ package ecprac.era270;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Collections;
 
 import ecprac.torcs.client.Controller.Stage;
 import ecprac.torcs.genome.Utilities;
@@ -13,31 +16,34 @@ import ecprac.torcs.race.Race.Track;
 
 public class SpamEggsEA {
 
-    Random r = new Random(12); //124
+    public static final int populationSize = 5;
 
-    SpamEggsGenome[] population = new SpamEggsGenome[2];
-    double[] fitness = new double[2];
-    int evals;
+    Random r = new Random(); 
+
+    SpamEggsGenome[] population = new SpamEggsGenome[populationSize];
+
+    double[] bestLaps = new double[Track.values().length];
+
+    int evals = 2;
     
     public void run() {
-
         // initialize population
         initialize();
-        evaluateAll();
-
-        evals = 2;
 
         // the evolutionary loop
         while (evals < 1000) {
-            if (fitness[0] > fitness[1]) {
-                // select first for replication
-                population[1] = mutate(population[0]);
-                evaluateAll();
-            } else {
-                // select second for replication
-                population[0] = mutate(population[1]);
-                evaluateAll();
-            }
+            evaluateAll();
+
+            int worstIndex = findWorstIndex();
+            SpamEggsGenome[] best = findBest(2);
+
+            System.out.println("Replacing individual " + population[worstIndex]);
+            System.out.println("By crossing over " + best[0] + " and " + best[1]);
+
+            // Replace the worst individual with a new one created from the two
+            // best individuals in the population. Also mutate him after
+            // crossover
+            population[worstIndex] = mutate(crossover(best));
 
             evals += 2;
             System.out.println("evals: " + evals);
@@ -45,77 +51,135 @@ public class SpamEggsEA {
 
         // save best
         try {
-            if (fitness[0] > fitness[1]) {
-                Utilities.saveGenome(population[0], "best.genome");
-            } else {
-                Utilities.saveGenome(population[1], "best.genome");
-            }
-            
-        } catch (Exception e) {
+            Utilities.saveGenome(findBest(1)[0], "best.genome");
+        } 
+        catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
+    private SpamEggsGenome[] findBest(int n) {
+        SpamEggsGenome[] best = new SpamEggsGenome[n];
+
+        List<SpamEggsGenome> popList = Arrays.asList(population);
+        Collections.sort(popList);
+
+        for (int i=0; i<n; i++)
+            best[i] = popList.get(populationSize - i - 1);
+
+        return best;
+    }
+
+    private int findWorstIndex() {
+        int worstIndex = 0;
+
+        for (int i=1; i<populationSize; i++)
+            if (population[i].fitness < population[worstIndex].fitness)
+                worstIndex = i;
+
+        return worstIndex;
+    }
+
     public void initialize() {
-        for (int i = 0; i < 2; i++) {
+        for (int i=0; i < Track.values().length; i++)
+            bestLaps[i] = 0;
+
+        for (int i=0; i < populationSize; i++) {
             SpamEggsGenome genome = mutate(new SpamEggsGenome());
-            /*
-            genome.speed = r.nextInt(200);                      // maxspeed = 200
-            genome.steering = r.nextDouble();
-            genome.trackpos = 0.8 * r.nextDouble();
-            */
             population[i] = genome;
         }
     }
 
-    public SpamEggsGenome mutate(SpamEggsGenome genome) {
+    private SpamEggsGenome mutate(SpamEggsGenome genome) {
         SpamEggsGenome genome2 = new SpamEggsGenome();
-        double ng = r.nextGaussian() * 10;
+        double ng = r.nextGaussian() * 5;
 
         for (int i=0; i<genome.speed.length; i++)
-            genome2.speed[i] = (int)(genome.speed[i] + ng);
+            if (r.nextGaussian() > 0)
+                genome2.speed[i] = (int)(genome.speed[i] + ng);
 
-        System.out.println("Genome after mutation: " + genome2);
         return genome2;
+    }
+
+    private SpamEggsGenome crossover(SpamEggsGenome[] parents) {
+        int speedArrayLength = parents[0].speed.length;
+        int crossoverPoint = r.nextInt(speedArrayLength);
+        SpamEggsGenome offspring = new SpamEggsGenome();
+
+        for (int i=0; i<crossoverPoint; i++)
+            offspring.speed[i] = parents[0].speed[i];
+
+        for (int i=crossoverPoint; i<speedArrayLength; i++)
+            offspring.speed[i] = parents[1].speed[i];
+
+        return offspring;
+    }
+
+    private void evaluateOnTrack(Track t) {
+        SpamEggsGenomeDriver[] drivers = new SpamEggsGenomeDriver[populationSize];
+        double bestTime;
+        int trackIndex = t.ordinal();
+
+        // init race
+        Race race = new Race();
+        race.setTrack(t);
+        race.setStage(Stage.RACE);
+        race.setTermination(Termination.LAPS, 2);
+
+        // Add drivers
+        for (int i=0; i<populationSize; i++) {
+            drivers[i] = new SpamEggsGenomeDriver();
+            drivers[i].init();
+            drivers[i].loadGenome(population[i]);
+            race.addCompetitor(drivers[i]);
+        }
+        
+        // XXX: Run in Text Mode
+        RaceResults results = race.run();
+        //RaceResults results = race.runWithGUI();
+
+        // if we don't have best lap time for this track
+        if (bestLaps[trackIndex] == 0) {
+            bestLaps[trackIndex] = Double.POSITIVE_INFINITY;
+
+            for (int i=0; i<populationSize; i++) {
+                bestTime = results.get(drivers[i]).bestLapTime;
+                if (bestTime < bestLaps[trackIndex])
+                    bestLaps[trackIndex] = bestTime;
+            }
+        }
+
+        // adding up fitnesses on this track, we're gonna average them at the end
+        for (int i=0; i<populationSize; i++) {
+            bestTime = results.get(drivers[i]).bestLapTime;
+
+            population[i].fitness += bestLaps[trackIndex] - bestTime;
+        }
     }
     
     public void evaluateAll() {
+        // resetting fitness
+        for (int i=0; i<populationSize; i++)
+            population[i].fitness = 0;
 
-        Race race = new Race();
-        
-        //  One of the two ovals
-        race.setTrack(Track.fromIndex((evals / 2) % 2));
-        race.setStage(Stage.RACE);
-        race.setTermination(Termination.LAPS, 3);
-        
-        // Add driver 1
-        SpamEggsGenomeDriver driver1 = new SpamEggsGenomeDriver();
-        driver1.init();
-        driver1.loadGenome(population[0]);
-        race.addCompetitor(driver1);
-        
-        // Add driver 2
-        SpamEggsGenomeDriver driver2 = new SpamEggsGenomeDriver();
-        driver2.init();
-        driver2.loadGenome(population[1]);
-        race.addCompetitor(driver2);
-        
-        // Run in Text Mode
-        RaceResults results = race.run();
-        //RaceResults results = race.runWithGUI();
-        
-        // Fitness = BestLap, except if both did not do at least one lap
-        if( Double.isInfinite(results.get(driver1).bestLapTime) &&  Double.isInfinite(results.get(driver2).bestLapTime)){
-            fitness[0] = results.get(driver1).distance;
-            fitness[1] = results.get(driver2).distance; 
-        } else {
-            fitness[0] = -1 * results.get(driver1).bestLapTime;
-            fitness[1] = -1 * results.get(driver2).bestLapTime;     
+        for (Track t: Track.values()) {
+            System.out.println("Evaluating on track " + t);
+
+            for (SpamEggsGenome g: population)
+                System.out.println(g);
+
+            evaluateOnTrack(t);
+
+            for (int i=0; i<populationSize; i++)
+                System.out.println("fitness for individual " + i + ": " + population[i].fitness);
         }
-        
-        System.out.println("fitness[0]=" + fitness[0]);
-        System.out.println("fitness[1]=" + fitness[1]);
+
+        // calculate the average fitness for each individual
+        for (int i=0; i<populationSize; i++) {
+            population[i].fitness = population[i].fitness / Track.values().length;
+            System.out.println("Average fitness for individual " + i + ": " + population[i].fitness);
+        }
     }
     
     public void show() {
