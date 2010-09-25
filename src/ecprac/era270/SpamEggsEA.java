@@ -3,8 +3,7 @@ package ecprac.era270;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
-import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Collections;
 
 import ecprac.torcs.client.Controller.Stage;
@@ -20,7 +19,7 @@ public class SpamEggsEA {
 
     Random r = new Random(); 
 
-    SpamEggsGenome[] population = new SpamEggsGenome[populationSize];
+    LinkedList<SpamEggsGenome> population = new LinkedList<SpamEggsGenome>();
 
     double[] bestLaps = new double[Track.values().length];
 
@@ -37,13 +36,13 @@ public class SpamEggsEA {
             int worstIndex = findWorstIndex();
             SpamEggsGenome[] best = findBest(2);
 
-            System.out.println("Replacing individual " + population[worstIndex]);
+            System.out.println("Replacing individual " + population.get(worstIndex));
             System.out.println("By crossing over " + best[0] + " and " + best[1]);
 
             // Replace the worst individual with a new one created from the two
             // best individuals in the population. Also mutate him after
             // crossover
-            population[worstIndex] = mutate(crossover(best));
+            population.set(worstIndex, mutate(crossover(best)));
 
             evals += 2;
             System.out.println("evals: " + evals);
@@ -62,11 +61,10 @@ public class SpamEggsEA {
     private SpamEggsGenome[] findBest(int n) {
         SpamEggsGenome[] best = new SpamEggsGenome[n];
 
-        List<SpamEggsGenome> popList = Arrays.asList(population);
-        Collections.sort(popList);
+        Collections.sort(population);
 
         for (int i=0; i<n; i++)
-            best[i] = popList.get(populationSize - i - 1);
+            best[i] = population.get(populationSize - i - 1);
 
         return best;
     }
@@ -75,7 +73,7 @@ public class SpamEggsEA {
         int worstIndex = 0;
 
         for (int i=1; i<populationSize; i++)
-            if (population[i].fitness < population[worstIndex].fitness)
+            if (population.get(i).fitness < population.get(worstIndex).fitness)
                 worstIndex = i;
 
         return worstIndex;
@@ -85,10 +83,8 @@ public class SpamEggsEA {
         for (int i=0; i < Track.values().length; i++)
             bestLaps[i] = 0;
 
-        for (int i=0; i < populationSize; i++) {
-            SpamEggsGenome genome = mutate(new SpamEggsGenome());
-            population[i] = genome;
-        }
+        for (int i=0; i < populationSize; i++) 
+            population.add(mutate(new SpamEggsGenome()));
     }
 
     private SpamEggsGenome mutate(SpamEggsGenome genome) {
@@ -131,7 +127,7 @@ public class SpamEggsEA {
         for (int i=0; i<populationSize; i++) {
             drivers[i] = new SpamEggsGenomeDriver();
             drivers[i].init();
-            drivers[i].loadGenome(population[i]);
+            drivers[i].loadGenome(population.get(i));
             race.addCompetitor(drivers[i]);
         }
         
@@ -154,31 +150,28 @@ public class SpamEggsEA {
         for (int i=0; i<populationSize; i++) {
             bestTime = results.get(drivers[i]).bestLapTime;
 
-            population[i].fitness += bestLaps[trackIndex] - bestTime;
+            population.get(i).fitness += bestLaps[trackIndex] - bestTime;
         }
     }
     
     public void evaluateAll() {
         // resetting fitness
         for (int i=0; i<populationSize; i++)
-            population[i].fitness = 0;
+            population.get(i).fitness = 0;
 
         for (Track t: Track.values()) {
             System.out.println("Evaluating on track " + t);
 
-            for (SpamEggsGenome g: population)
-                System.out.println(g);
-
             evaluateOnTrack(t);
-
-            for (int i=0; i<populationSize; i++)
-                System.out.println("fitness for individual " + i + ": " + population[i].fitness);
+            
+            for (SpamEggsGenome g: population)
+                System.out.println("fitness=" + g.fitness + " for individual " + g);
         }
 
         // calculate the average fitness for each individual
-        for (int i=0; i<populationSize; i++) {
-            population[i].fitness = population[i].fitness / Track.values().length;
-            System.out.println("Average fitness for individual " + i + ": " + population[i].fitness);
+        for (SpamEggsGenome g: population) {
+            g.fitness = g.fitness / Track.values().length;
+            System.out.println("Average fitness= " +  g.fitness + " for individual " + g);
         }
     }
     
