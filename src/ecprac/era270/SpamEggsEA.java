@@ -33,50 +33,34 @@ public class SpamEggsEA {
         while (evals < 1000) {
             evaluateAll();
 
-            int worstIndex = findWorstIndex();
-            SpamEggsGenome[] best = findBest(2);
-
-            System.out.println("Replacing individual " + population.get(worstIndex));
-            System.out.println("By crossing over " + best[0] + " and " + best[1]);
-
             // Replace the worst individual with a new one created from the two
             // best individuals in the population. Also mutate him after
             // crossover
-            population.set(worstIndex, mutate(crossover(best)));
+            Collections.sort(population);
+            
+            SpamEggsGenome worst = population.removeFirst();
+            System.out.println("Replacing individual with fitness " + worst.fitness);
 
-            evals += 2;
+            SpamEggsGenome parent1 = population.removeLast();
+            SpamEggsGenome parent2 = population.removeLast();
+            System.out.println("By crossing over " + parent1.fitness + " and " + parent2.fitness);
+
+            population.add(mutate(crossover(parent1, parent2)));
+            population.add(parent1);
+            population.add(parent2);
+
+            evals += 1;
             System.out.println("evals: " + evals);
         }
 
         // save best
         try {
-            Utilities.saveGenome(findBest(1)[0], "best.genome");
+            Collections.sort(population);
+            Utilities.saveGenome(population.getLast(), "best.genome");
         } 
         catch (Exception e) {
             e.printStackTrace();
         }
-
-    }
-
-    private SpamEggsGenome[] findBest(int n) {
-        SpamEggsGenome[] best = new SpamEggsGenome[n];
-
-        Collections.sort(population);
-
-        for (int i=0; i<n; i++)
-            best[i] = population.get(populationSize - i - 1);
-
-        return best;
-    }
-
-    private int findWorstIndex() {
-        int worstIndex = 0;
-
-        for (int i=1; i<populationSize; i++)
-            if (population.get(i).fitness < population.get(worstIndex).fitness)
-                worstIndex = i;
-
-        return worstIndex;
     }
 
     public void initialize() {
@@ -98,16 +82,16 @@ public class SpamEggsEA {
         return genome2;
     }
 
-    private SpamEggsGenome crossover(SpamEggsGenome[] parents) {
-        int speedArrayLength = parents[0].speed.length;
+    private SpamEggsGenome crossover(SpamEggsGenome parent1, SpamEggsGenome parent2) {
+        int speedArrayLength = parent1.speed.length;
         int crossoverPoint = r.nextInt(speedArrayLength);
         SpamEggsGenome offspring = new SpamEggsGenome();
 
         for (int i=0; i<crossoverPoint; i++)
-            offspring.speed[i] = parents[0].speed[i];
+            offspring.speed[i] = parent1.speed[i];
 
         for (int i=crossoverPoint; i<speedArrayLength; i++)
-            offspring.speed[i] = parents[1].speed[i];
+            offspring.speed[i] = parent2.speed[i];
 
         return offspring;
     }
