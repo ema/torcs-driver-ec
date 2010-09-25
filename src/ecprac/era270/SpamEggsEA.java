@@ -33,23 +33,32 @@ public class SpamEggsEA {
         while (evals < 1000) {
             evaluateAll();
 
-            // Replace the worst individual with a new one created from the two
-            // best individuals in the population. Also mutate him after
+            // Replace the worst individuals with two new ones created from the
+            // two best individuals in the population. Also mutate them after
             // crossover
             Collections.sort(population);
             
-            SpamEggsGenome worst = population.removeFirst();
-            System.out.println("Replacing individual with fitness " + worst.fitness);
+            // parent selection
+            SpamEggsGenome parent1 = population.get(populationSize - 1);
+            SpamEggsGenome parent2 = population.get(populationSize - 2);
 
-            SpamEggsGenome parent1 = population.removeLast();
-            SpamEggsGenome parent2 = population.removeLast();
-            System.out.println("By crossing over " + parent1.fitness + " and " + parent2.fitness);
+            // removing the two worst individuals
+            population.removeFirst();
+            population.removeFirst();
 
-            population.add(mutate(crossover(parent1, parent2)));
-            population.add(parent1);
-            population.add(parent2);
+            // crossover and mutation
+            SpamEggsGenome[] offsprings = crossover(parent1, parent2);
+            for (int i=0; i<offsprings.length; i++) {
+                SpamEggsGenome offspring = offsprings[i];
 
-            evals += 1;
+                if (r.nextBoolean()) 
+                    // XXX: is 50% mutation rate acceptable?
+                    offspring = mutate(offspring);
+
+                population.add(offspring);
+            }
+
+            evals += 2;
             System.out.println("evals: " + evals);
         }
 
@@ -68,32 +77,48 @@ public class SpamEggsEA {
             bestLaps[i] = 0;
 
         for (int i=0; i < populationSize; i++) 
-            population.add(mutate(new SpamEggsGenome()));
+            population.add(new SpamEggsGenome());
     }
 
     private SpamEggsGenome mutate(SpamEggsGenome genome) {
         SpamEggsGenome genome2 = new SpamEggsGenome();
         double ng = r.nextGaussian() * 5;
 
-        for (int i=0; i<genome.speed.length; i++)
-            if (r.nextGaussian() > 0)
-                genome2.speed[i] = (int)(genome.speed[i] + ng);
+        System.out.println("Mutating " + genome);
+
+        for (int i=0; i<genome.speed.length; i++) {
+            int value = genome.speed[i];
+
+            if (r.nextInt(9) < 4)
+                genome2.speed[i] = (int)(value + ng);
+            else
+                genome2.speed[i] = value;
+        }
+
+        System.out.println("Mutated: " + genome2);
 
         return genome2;
     }
 
-    private SpamEggsGenome crossover(SpamEggsGenome parent1, SpamEggsGenome parent2) {
+    private SpamEggsGenome[] crossover(SpamEggsGenome parent1, SpamEggsGenome parent2) {
         int speedArrayLength = parent1.speed.length;
         int crossoverPoint = r.nextInt(speedArrayLength);
-        SpamEggsGenome offspring = new SpamEggsGenome();
 
-        for (int i=0; i<crossoverPoint; i++)
-            offspring.speed[i] = parent1.speed[i];
+        SpamEggsGenome[] offsprings = new SpamEggsGenome[2];
+        offsprings[0] = new SpamEggsGenome();
+        offsprings[1] = new SpamEggsGenome();
 
-        for (int i=crossoverPoint; i<speedArrayLength; i++)
-            offspring.speed[i] = parent2.speed[i];
+        for (int i=0; i<crossoverPoint; i++) {
+            offsprings[0].speed[i] = parent1.speed[i];
+            offsprings[1].speed[i] = parent2.speed[i];
+        }
 
-        return offspring;
+        for (int i=crossoverPoint; i<speedArrayLength; i++) {
+            offsprings[0].speed[i] = parent2.speed[i];
+            offsprings[1].speed[i] = parent1.speed[i];
+        }
+
+        return offsprings;
     }
 
     private void evaluateOnTrack(Track t) {
@@ -105,7 +130,7 @@ public class SpamEggsEA {
         Race race = new Race();
         race.setTrack(t);
         race.setStage(Stage.RACE);
-        race.setTermination(Termination.LAPS, 2);
+        race.setTermination(Termination.LAPS, 3);
 
         // Add drivers
         for (int i=0; i<populationSize; i++) {
