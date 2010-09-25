@@ -1,14 +1,17 @@
 package ecprac.era270;
 
+import java.util.Random;
+
 import ecprac.torcs.genome.IGenome;
 
 public class SpamEggsGenome implements IGenome, Comparable<SpamEggsGenome> {
 	
 	public int[] speed = new int[10];
     public double fitness;
+    Random r = new Random();
 
     public SpamEggsGenome() {
-        int val = 60;
+        int val = 60 + r.nextInt(10);
 
         for (int i=0; i<10; i++) {
             speed[i] = val;
