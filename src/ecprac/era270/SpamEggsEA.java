@@ -17,6 +17,7 @@ public class SpamEggsEA {
 
     public static final int populationSize = 5;
     public static final int cycles = 50;
+    public boolean runUnderCli = true;
 
     Random r = new Random(); 
 
@@ -141,9 +142,12 @@ public class SpamEggsEA {
             race.addCompetitor(drivers[i]);
         }
         
-        // XXX: Run in Text Mode
-        RaceResults results = race.run();
-        //RaceResults results = race.runWithGUI();
+        RaceResults results = null;
+
+        if (runUnderCli)
+            results = race.run();
+        else
+            results = race.runWithGUI();
 
         // if we don't have best lap time for this track
         if (bestLaps[trackIndex] == 0) {
@@ -166,8 +170,10 @@ public class SpamEggsEA {
     
     public void evaluateAll() {
         // resetting fitness
-        for (int i=0; i<populationSize; i++)
+        for (int i=0; i<populationSize; i++) {
             population.get(i).fitness = 0;
+            System.out.println(population.get(i));
+        }
 
         for (Track t: Track.values()) {
             System.out.println("Evaluating on track " + t);
@@ -217,10 +223,17 @@ public class SpamEggsEA {
          * Start without arguments to run the EA, start with -show to show the best found
          * 
          */
-        if(args.length > 0 && args[0].equals("-show")){
-            new SpamEggsEA().show();
-        } else {
-            new SpamEggsEA().run();
+        SpamEggsEA ea = new SpamEggsEA();
+
+        if (args.length == 0)
+            ea.run();
+        else {
+            ea.runUnderCli = !args[0].equals("-rungui");
+
+            if (args[0].equals("-show"))
+                ea.show();
+            else
+                ea.run();
         }
     }
 }

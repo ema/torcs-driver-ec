@@ -13,7 +13,7 @@ public class SpamEggsGenome implements IGenome, Comparable<SpamEggsGenome> {
     public SpamEggsGenome() {
         int val = 60 + r.nextInt(10);
 
-        for (int i=0; i<10; i++) {
+        for (int i=0; i<speed.length; i++) {
             speed[i] = val;
             val += 5;
         }

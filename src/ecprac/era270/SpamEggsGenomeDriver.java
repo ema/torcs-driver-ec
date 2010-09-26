@@ -63,11 +63,6 @@ public class SpamEggsGenomeDriver extends GenomeDriver {
         for (int i=1; i < edgeSensors.length - 1; i++)
             if (edgeSensors[i] >= edgeSensors[max]) 
                 max = i;
-        /*
-        double d = edgeSensors[max];
-        double dl = edgeSensors[max + 1];
-        double dr = edgeSensors[max - 1];
-        */
 
         double steeringAmount = 0.1 * max - 0.9;
 		action.steering = steeringAmount;

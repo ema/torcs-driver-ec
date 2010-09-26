@@ -39,6 +39,12 @@
 	<target name="run" description="Run the algorithm">
 		<java jar="${target-dir}/${jarfile}" fork="true" />
 	</target>
+
+	<target name="rungui" description="Run the algorithm under GUI">
+		<java jar="${target-dir}/${jarfile}" fork="true">
+            <arg value="-rungui" />
+        </java>
+	</target>
 	
 	<target name="show" description="Show the best">
 		<java jar="${target-dir}/${jarfile}" fork="true">
