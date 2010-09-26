@@ -16,6 +16,7 @@ import ecprac.torcs.race.Race.Track;
 public class SpamEggsEA {
 
     public static final int populationSize = 5;
+    public static final int cycles = 50;
 
     Random r = new Random(); 
 
@@ -30,7 +31,7 @@ public class SpamEggsEA {
         initialize();
 
         // the evolutionary loop
-        while (evals < 1000) {
+        while (evals < cycles) {
             evaluateAll();
 
             // Replace the worst individuals with two new ones created from the
@@ -130,7 +131,7 @@ public class SpamEggsEA {
         Race race = new Race();
         race.setTrack(t);
         race.setStage(Stage.RACE);
-        race.setTermination(Termination.LAPS, 3);
+        race.setTermination(Termination.LAPS, 2);
 
         // Add drivers
         for (int i=0; i<populationSize; i++) {
