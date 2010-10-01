@@ -1,6 +1,7 @@
 package ecprac.era270;
 
 import java.util.Random;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Collections;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import ecprac.torcs.genome.Utilities;
 abstract class GenericEA {
 
     // population
-    protected LinkedList<SpamEggsGenome> population = null;
+    protected List<SpamEggsGenome> population = null;
     // random number generator
     protected Random r = new Random(); 
     // how far we are in the evolutionary process
@@ -18,24 +19,24 @@ abstract class GenericEA {
 
     // constructor parameters
     protected int populationSize;
+    protected int matingPoolSize;
     protected int nRuns;
-    protected int nRacers;
     protected String algorithmName;
 
-    public GenericEA(int populationSize, int nRuns, int nRacers, 
+    public GenericEA(int populationSize, int matingPoolSize, int nRuns, 
                         String algorithmName) 
     {
         this.populationSize = populationSize;
+        this.matingPoolSize = matingPoolSize;
         this.nRuns = nRuns;
-        this.nRacers = nRacers;
         this.algorithmName = algorithmName;
     }
 
     // methods to be implemented by specific EAs 
     abstract SpamEggsGenome createIndividual();
-    abstract void evaluateFitness();
-    abstract LinkedList<SpamEggsGenome> selectParents();
-    abstract LinkedList<SpamEggsGenome> recombine(LinkedList<SpamEggsGenome> parents);
+    abstract List<SpamEggsGenome> evaluateFitness(List<SpamEggsGenome> individuals);
+    abstract List<SpamEggsGenome> selectParents();
+    abstract List<SpamEggsGenome> recombine(List<SpamEggsGenome> parents);
     abstract SpamEggsGenome mutate(SpamEggsGenome individual);
     abstract void selectSurvivors();
 
@@ -46,8 +47,8 @@ abstract class GenericEA {
             population.add(createIndividual());
     }
 
-    private LinkedList<SpamEggsGenome> getBestOrWorst(int n, boolean best) {
-        LinkedList<SpamEggsGenome> individuals = new LinkedList<SpamEggsGenome>();
+    private List<SpamEggsGenome> getBestOrWorst(int n, boolean best) {
+        List<SpamEggsGenome> individuals = new LinkedList<SpamEggsGenome>();
 
         // sort individuals by their fitness value
         Collections.sort(population);
@@ -58,23 +59,20 @@ abstract class GenericEA {
         return individuals;
     }
 
-    LinkedList<SpamEggsGenome> getBest(int n) {
+    List<SpamEggsGenome> getBest(int n) {
         return getBestOrWorst(n, true);
     }
 
-    LinkedList<SpamEggsGenome> getWorst(int n) {
+    List<SpamEggsGenome> getWorst(int n) {
         return getBestOrWorst(n, false);
     }
 
     void evolve() {
-        System.out.println("Evolutionary run " + curEvaluation);
-        evaluateFitness();
-
         // parents selection
-        LinkedList<SpamEggsGenome> parents = selectParents();
+        List<SpamEggsGenome> parents = selectParents();
 
         // recombination
-        LinkedList<SpamEggsGenome> offsprings = recombine(parents);
+        List<SpamEggsGenome> offsprings = recombine(parents);
 
         // mutation
         for (SpamEggsGenome offspring: offsprings)
@@ -82,16 +80,19 @@ abstract class GenericEA {
 
         // survivor selection
         selectSurvivors();
+
+        System.out.print("Evolutionary run " + curEvaluation);
+        System.out.println(" best fitness " + getBest(1).get(0).fitness);
     }
 
     void run() {
         initPopulation();
 
-        for (curEvaluation=0; curEvaluation < nRuns; curEvaluation += nRacers)
+        for (curEvaluation=0; curEvaluation < nRuns; curEvaluation++)
             evolve();
 
         try {
-            SpamEggsGenome best = getBest(1).getFirst();
+            SpamEggsGenome best = getBest(1).get(0);
             Utilities.saveGenome(best, "best-" + algorithmName + ".genome");
         }
         catch (IOException e) {
