@@ -1,7 +1,7 @@
 package ecprac.era270;
 
 import java.util.Random;
-import java.util.LinkedList;
+import java.util.List;
 
 import ecprac.torcs.race.Race;
 import ecprac.torcs.race.Race.Track;
@@ -11,10 +11,10 @@ import ecprac.torcs.race.Race.Termination;
 import ecprac.torcs.client.Controller.Stage;
 
 public class TorcsRace { // extends Thread {
-    public LinkedList<SpamEggsGenome> individuals;
+    public List<SpamEggsGenome> individuals;
     private Random r = new Random();
 
-    public TorcsRace(LinkedList<SpamEggsGenome> individuals) {
+    public TorcsRace(List<SpamEggsGenome> individuals) {
         this.individuals = individuals;
         //start();
         run();
@@ -44,15 +44,9 @@ public class TorcsRace { // extends Thread {
         
         RaceResults results = race.run();
 
-        // TODO: think about better ways to decouple fitness calculation
         for (int i=0; i<individuals.size(); i++) {
             RaceResult result = results.get(drivers[i]);
-            System.out.println("distance: " + result.distance);
-            System.out.println("time: " + result.time);
-
             individuals.get(i).fitness = result.distance / result.time;
-            
-            System.out.println("fitness=" + individuals.get(i).fitness + " for individual " + individuals.get(i));
         }
     }
 }
