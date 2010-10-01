@@ -3,9 +3,11 @@ package ecprac.era270;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Collections;
+import java.util.Random;
 
 public class SpamEggsGA extends GenericEA {
     private static final int tournamentSize = 6;
+    private static final Random r = new Random();
 
     SpamEggsGA() {
         super(100, // population size
@@ -23,11 +25,7 @@ public class SpamEggsGA extends GenericEA {
         return new TorcsRace(individuals).individuals;
     }
 
-    List<SpamEggsGenome> selectParents() {
-        /* 
-         * Tournament selection of #matingPoolSize individuals
-         */
-
+    private List<SpamEggsGenome> tournamentSelection() {
         // Pick #tournamentSize random individuals (candidates)
         Collections.shuffle(population);
 
@@ -38,8 +36,14 @@ public class SpamEggsGA extends GenericEA {
         List<SpamEggsGenome> parents = evaluateFitness(candidates);
         Collections.sort(parents);
 
-        // return the best #matingPoolSize individuals
-        return parents.subList(tournamentSize - matingPoolSize, tournamentSize - 1);
+        return parents;
+    }
+
+    List<SpamEggsGenome> selectParents() {
+        /* 
+         * Tournament selection of #matingPoolSize individuals
+         */
+        return tournamentSelection().subList(tournamentSize - matingPoolSize, tournamentSize - 1);
     }
 
     private SpamEggsGenome[] crossover(SpamEggsGenome parent1, SpamEggsGenome parent2) 
@@ -48,7 +52,7 @@ public class SpamEggsGA extends GenericEA {
          * One-point crossover of two parents
          */
         int arrayLength = parent1.speed.length;
-        int crossoverPoint = 1 + new java.util.Random().nextInt(arrayLength - 1);
+        int crossoverPoint = 1 + r.nextInt(arrayLength - 1);
 
         // two new individuals
         SpamEggsGenome[] offsprings = new SpamEggsGenome[2];
@@ -81,14 +85,29 @@ public class SpamEggsGA extends GenericEA {
     }
 
     SpamEggsGenome mutate(SpamEggsGenome individual) {
-        // XXX
+        /*
+         * Creep Mutation
+         */
+        
+        // Random "normally" distributed value with mean 0.0 and standard
+        // deviation 1.0 
+        double value = r.nextGaussian();
+
+        // Mutation probability
+        double p = 0.4;
+
+        for (int i=0; i<individual.speed.length; i++)
+            // uniformly distributed value between 0.0 and 1.0
+            if (r.nextFloat() > p)
+                individual.speed[i] = (int)(individual.speed[i] + value);
+            
         return individual;
     }
 
     void selectSurvivors() {
-        // XXX
-        LinkedList<SpamEggsGenome> individual = (LinkedList<SpamEggsGenome>)population;
-        individual.removeLast();
-        individual.removeLast();
+        List<SpamEggsGenome> candidates = tournamentSelection();
+
+        for (int i=0; i<matingPoolSize; i++)
+            population.remove(candidates.get(i));
     }
 }

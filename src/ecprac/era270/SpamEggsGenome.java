@@ -1,5 +1,6 @@
 package ecprac.era270;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import ecprac.torcs.genome.IGenome;
@@ -36,5 +37,13 @@ public class SpamEggsGenome implements IGenome, Comparable<SpamEggsGenome> {
             return 1;
 
         return 0;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SpamEggsGenome)) return false;
+            
+        SpamEggsGenome other = (SpamEggsGenome)o;
+        return Arrays.equals(speed, other.speed);
     }
 }
