@@ -24,8 +24,9 @@ public class TorcsRace { // extends Thread {
         SpamEggsGenomeDriver[] drivers = new SpamEggsGenomeDriver[individuals.size()];
 
         // Random track
-        Track t = Track.fromIndex(r.nextInt(Track.values().length));
-        System.out.println("Evaluating on track " + t);
+        //Track t = Track.fromIndex(r.nextInt(Track.values().length));
+        Track t = Track.fromIndex(3);
+        //System.out.println("Evaluating on track " + t);
         
         Race race = new Race();
         race.setTrack(t);
