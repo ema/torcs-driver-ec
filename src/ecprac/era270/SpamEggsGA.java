@@ -1,48 +1,48 @@
 package ecprac.era270;
 
+import java.util.List;
 import java.util.LinkedList;
+import java.util.Collections;
 
 public class SpamEggsGA extends GenericEA {
+    private static final int tournamentSize = 6;
 
     SpamEggsGA() {
-        super(10, 50, 2, "Basic genetic algorithm");
+        super(100, // population size
+              4, // mating pool size
+              10, // number of evolutionary cycles
+              "Basic genetic algorithm");
     }
 
     SpamEggsGenome createIndividual() {
         return new SpamEggsGenome();
     }
 
-    void evaluateFitness() {
-        LinkedList<TorcsRace> races = new LinkedList<TorcsRace>();
-
-        for (int i=0; i<populationSize; i++) {
-            LinkedList<SpamEggsGenome> individuals = new LinkedList<SpamEggsGenome>();
-            individuals.add(population.get(i));
-
-            if (i+1 < populationSize)
-                individuals.add(population.get(i+1));
-
-            races.add(new TorcsRace(individuals));
-        }
-        /* FIXME: doesn't run in parallel
-        for (TorcsRace t: races)
-            try {
-                t.join();
-            }
-            catch (InterruptedException e) {
-            }
-        */
+    List<SpamEggsGenome> evaluateFitness(List<SpamEggsGenome> individuals) 
+    {
+        return new TorcsRace(individuals).individuals;
     }
 
-    LinkedList<SpamEggsGenome> selectParents() {
-        // XXX
-        LinkedList<SpamEggsGenome> parents = new LinkedList<SpamEggsGenome>();
-        parents.add(population.get(0));
-        parents.add(population.get(1));
-        return parents;
+    List<SpamEggsGenome> selectParents() {
+        /* 
+         * Tournament selection of #matingPoolSize individuals
+         */
+
+        // Pick #tournamentSize random individuals (candidates)
+        Collections.shuffle(population);
+
+        List<SpamEggsGenome> candidates = new LinkedList<SpamEggsGenome>();
+        for (int i=0; i<tournamentSize; i++)
+            candidates.add(population.get(i));
+
+        List<SpamEggsGenome> parents = evaluateFitness(candidates);
+        Collections.sort(parents);
+
+        // return the best #matingPoolSize individuals
+        return parents.subList(tournamentSize - matingPoolSize, tournamentSize - 1);
     }
 
-    LinkedList<SpamEggsGenome> recombine(LinkedList<SpamEggsGenome> parents) {
+    List<SpamEggsGenome> recombine(List<SpamEggsGenome> parents) {
         // XXX
         return parents;
     }
@@ -54,7 +54,8 @@ public class SpamEggsGA extends GenericEA {
 
     void selectSurvivors() {
         // XXX
-        population.removeLast();
-        population.removeLast();
+        LinkedList<SpamEggsGenome> individual = (LinkedList<SpamEggsGenome>)population;
+        individual.removeLast();
+        individual.removeLast();
     }
 }
