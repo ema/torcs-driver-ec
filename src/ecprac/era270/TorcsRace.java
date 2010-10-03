@@ -10,11 +10,11 @@ import ecprac.torcs.race.RaceResults;
 import ecprac.torcs.race.Race.Termination;
 import ecprac.torcs.client.Controller.Stage;
 
-public class TorcsRace { // extends Thread {
-    public List<SpamEggsGenome> individuals;
+public class TorcsRace<G extends GenericGenome> { // extends Thread {
+    public List<G> individuals;
     private Random r = new Random();
 
-    public TorcsRace(List<SpamEggsGenome> individuals) {
+    public TorcsRace(List<G> individuals) {
         this.individuals = individuals;
         //start();
         run();
@@ -32,8 +32,8 @@ public class TorcsRace { // extends Thread {
         race.setTrack(t);
         race.setStage(Stage.RACE);
         //race.setStage(Stage.QUALIFYING);
-        //race.setTermination(Termination.LAPS, 3);
-        race.setTermination(Termination.DISTANCE, 10);
+        race.setTermination(Termination.LAPS, 1);
+        //race.setTermination(Termination.DISTANCE, 10);
 
         // Add drivers
         for (int i=0; i<individuals.size(); i++) {

@@ -5,7 +5,7 @@ import java.util.Random;
 
 import ecprac.torcs.genome.IGenome;
 
-public class SpamEggsGenome implements IGenome, Comparable<SpamEggsGenome> {
+public class SpamEggsGenome extends GenericGenome {
 	
 	public int[] speed = new int[10];
     public double fitness;
@@ -27,16 +27,6 @@ public class SpamEggsGenome implements IGenome, Comparable<SpamEggsGenome> {
             toprint += i + ": " + speed[i] + " ";
 
         return toprint;
-    }
-
-    public int compareTo(SpamEggsGenome o) {
-        if (fitness < o.fitness)
-            return -1;
-
-        if (fitness > o.fitness)
-            return 1;
-
-        return 0;
     }
 
     public boolean equals(Object o) {

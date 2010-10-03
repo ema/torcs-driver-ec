@@ -5,14 +5,14 @@ import java.util.LinkedList;
 import java.util.Collections;
 import java.util.Random;
 
-public class SpamEggsGA extends GenericEA {
+public class SpamEggsGA extends GenericEA<SpamEggsGenome> {
     private static final int tournamentSize = 6;
     private static final Random r = new Random();
 
     SpamEggsGA() {
         super(100, // population size
               4, // mating pool size
-              20, // number of evolutionary cycles
+              100, // number of evolutionary cycles
               "Basic genetic algorithm");
     }
 
@@ -22,7 +22,7 @@ public class SpamEggsGA extends GenericEA {
 
     List<SpamEggsGenome> evaluateFitness(List<SpamEggsGenome> individuals) 
     {
-        return new TorcsRace(individuals).individuals;
+        return new TorcsRace<SpamEggsGenome>(individuals).individuals;
     }
 
     private List<SpamEggsGenome> tournamentSelection() {
