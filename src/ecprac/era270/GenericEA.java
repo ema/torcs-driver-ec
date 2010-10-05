@@ -81,8 +81,8 @@ abstract class GenericEA<G extends GenericGenome> {
         // survivor selection
         selectSurvivors();
 
-        System.out.print("Evolutionary run " + curEvaluation);
-        System.out.println(" best fitness " + getBest(1).get(0).fitness);
+        G best = getBest(1).get(0);
+        System.out.println(curEvaluation + " " + best.fitness);
     }
 
     void run() {
