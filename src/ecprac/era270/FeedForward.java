@@ -58,9 +58,9 @@ class Neuron implements Component {
 
 public class FeedForward {
 
-    Neuron[] inputLayer; //= new Neuron[2];
-    Neuron[] hiddenLayer; //= new Neuron[4];
-    Neuron[] outputLayer; //= new Neuron[2];
+    Neuron[] inputLayer; 
+    Neuron[] hiddenLayer; 
+    Neuron[] outputLayer; 
 
     public FeedForward(double[] values, int wantedOutputs) {
         inputLayer = new Neuron[values.length];
@@ -98,6 +98,54 @@ public class FeedForward {
             inputLayer[i].value = values[i];
     }
 
+    public int numberOfSynapses() {
+        // XXX: smarter return inputLayer.length * hiddenLayer.length + 
+        int syn = 0;
+
+        for (Neuron n: hiddenLayer)
+            syn += n.inputSynapses.length;
+
+        for (Neuron n: outputLayer)
+            syn += n.inputSynapses.length;
+
+        return syn;
+    }
+
+    public double[] getWeights() {
+        int cur = 0;
+        double weights[] = new double[numberOfSynapses()];
+
+        for (Neuron n: hiddenLayer)
+            for (Synapse s: n.inputSynapses) {
+                weights[cur] = s.weight;
+                cur++;
+            }
+
+        for (Neuron n: outputLayer)
+            for (Synapse s: n.inputSynapses) {
+                weights[cur] = s.weight;
+                cur++;
+            }
+
+        return weights;
+    }
+
+    public void changeWeights(double[] weights) {
+        int cur = 0;
+
+        for (int i=0; i<hiddenLayer.length; i++)
+            for (int j=0; j<hiddenLayer[i].inputSynapses.length; j++) {
+                hiddenLayer[i].inputSynapses[j].weight = weights[cur];
+                cur++;
+            }
+
+        for (int i=0; i<outputLayer.length; i++)
+            for (int j=0; j<outputLayer[i].inputSynapses.length; j++) {
+                outputLayer[i].inputSynapses[j].weight = weights[cur];
+                cur++;
+            }
+    }
+
     public double[] getOutput() {
         double[] results = new double[outputLayer.length];
 
@@ -119,8 +167,9 @@ public class FeedForward {
         for (double res: network.getOutput())
             System.out.println(res);
 
-        inputs[3] = 3;
-        network.changeInputs(inputs);
+        double[] weights = network.getWeights();
+        weights[3] = 1.0;
+        network.changeWeights(weights);
 
         for (double res: network.getOutput())
             System.out.println(res);
