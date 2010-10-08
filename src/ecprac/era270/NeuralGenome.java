@@ -7,7 +7,11 @@ public class NeuralGenome extends GenericGenome {
     public double fitness;
 
     // 19 because of the number of sensors
-    public FeedForward network = FeedForward(new double[19], 1);
+    public FeedForward network = new FeedForward(new double[19], 1);
+
+    public String toString() {  
+        return "";
+    }
 
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -17,6 +21,6 @@ public class NeuralGenome extends GenericGenome {
 
         return Arrays.equals(network.inputLayer, other.network.inputLayer) && 
             Arrays.equals(network.hiddenLayer, other.network.hiddenLayer) && 
-                Arrays.equals(network.outputLayer, other.network.outputLayer) && ;
+                Arrays.equals(network.outputLayer, other.network.outputLayer);
     }
 }

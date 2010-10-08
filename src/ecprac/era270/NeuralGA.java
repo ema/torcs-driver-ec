@@ -9,7 +9,7 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
     private static final int tournamentSize = 6;
     private static final Random r = new Random();
 
-    SpamEggsGA() {
+    NeuralGA() {
         super(100, // population size
               4, // mating pool size
               100, // number of evolutionary cycles
@@ -51,7 +51,11 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
         /*
          * One-point crossover of two parents
          */
-        int arrayLength = parent1.speed.length;
+
+        double[] weights1 = parent1.network.getWeights();
+        double[] weights2 = parent2.network.getWeights();
+
+        int arrayLength = weights1.length;
         int crossoverPoint = 1 + r.nextInt(arrayLength - 1);
 
         // two new individuals
@@ -59,17 +63,23 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
         offsprings[0] = new NeuralGenome();
         offsprings[1] = new NeuralGenome();
 
+        double[] child1 = new double[arrayLength];
+        double[] child2 = new double[arrayLength];
+
         // copy the first part of parent 1 and 2 to child 1 and 2 respectively 
         for (int i=0; i<crossoverPoint; i++) {
-            offsprings[0].speed[i] = parent1.speed[i];
-            offsprings[1].speed[i] = parent2.speed[i];
+            child1[i] = weights1[i];
+            child2[i] = weights2[i];
         }
     
         // copy the second part of parent 2 and 1 to child 1 and 2 respectively 
         for (int i=crossoverPoint; i<arrayLength; i++) {
-            offsprings[0].speed[i] = parent2.speed[i];
-            offsprings[1].speed[i] = parent1.speed[i];
+            child1[i] = weights2[i];
+            child2[i] = weights1[i];
         }
+
+        offsprings[0].network.changeWeights(child1);
+        offsprings[1].network.changeWeights(child2);
 
         return offsprings;
     }
@@ -96,11 +106,14 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
         // Mutation probability
         double p = 0.4;
 
-        for (int i=0; i<individual.speed.length; i++)
+        double[] weights = individual.network.getWeights();
+
+        for (int i=0; i<weights.length; i++)
             // uniformly distributed value between 0.0 and 1.0
             if (r.nextFloat() > p)
-                individual.speed[i] = (int)(individual.speed[i] + value);
+                weights[i] += value;
             
+        individual.network.changeWeights(weights);
         return individual;
     }
 

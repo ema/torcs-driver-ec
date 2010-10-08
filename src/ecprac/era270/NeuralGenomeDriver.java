@@ -69,8 +69,8 @@ public class NeuralGenomeDriver extends GenomeDriver {
         
         double wantedSpeed = 200 * network.getOutput()[0];
 
-        action.accelerate = getAccel(wantedSpeed, sensors.getSpeed());
-        action.brake = getBrake(wantedSpeed, sensors.getSpeed());
+        action.accelerate = getAccel((int)wantedSpeed, sensors.getSpeed());
+        action.brake = getBrake((int)wantedSpeed, sensors.getSpeed());
     }
 
 	public String getDriverName() {

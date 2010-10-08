@@ -1,3 +1,5 @@
+package ecprac.era270;
+
 import java.lang.Math;
 import java.util.Random;
 
