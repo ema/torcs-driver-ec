@@ -8,9 +8,7 @@ interface Component {
 }
 
 class Synapse implements Component {
-    Neuron source;
-    Neuron target;
-
+    Neuron source, target;
     double weight;
 
     private static final Random r = new Random();
@@ -60,9 +58,17 @@ class Neuron implements Component {
 
 public class FeedForward {
 
-    Neuron[] inputLayer; 
-    Neuron[] hiddenLayer; 
-    Neuron[] outputLayer; 
+    Neuron[] inputLayer, hiddenLayer, outputLayer; 
+
+    private Neuron[] initLayer(Neuron[] sourceLayer, Neuron[] destLayer) {
+        for(int i=0; i<destLayer.length; i++) {
+            destLayer[i].inputSynapses = new Synapse[sourceLayer.length];
+
+            for(int j=0; j<sourceLayer.length; j++) 
+                destLayer[i].inputSynapses[j] = new Synapse(sourceLayer[j], destLayer[i]);
+        }
+        return destLayer;
+    }
 
     public FeedForward(double[] values, int wantedOutputs) {
         inputLayer = new Neuron[values.length];
@@ -78,21 +84,8 @@ public class FeedForward {
         for(int i=0; i<outputLayer.length; i++) 
             outputLayer[i] = new Neuron(i, 2, 0);
 
-
-        for(int i=0; i<hiddenLayer.length; i++) {
-            hiddenLayer[i].inputSynapses = new Synapse[inputLayer.length];
-
-            for(int j=0; j<inputLayer.length; j++) 
-                hiddenLayer[i].inputSynapses[j] = new Synapse(inputLayer[j], hiddenLayer[i]);
-        }
-
-        for(int i=0; i<outputLayer.length; i++) {
-            outputLayer[i].inputSynapses = new Synapse[hiddenLayer.length];
-
-            for(int j=0; j<hiddenLayer.length; j++) 
-                outputLayer[i].inputSynapses[j] = new Synapse(hiddenLayer[j], outputLayer[i]);
-        }
-
+        hiddenLayer = initLayer(inputLayer, hiddenLayer);
+        outputLayer = initLayer(hiddenLayer, outputLayer);
     }
 
     public void changeInputs(double[] values) {
@@ -101,7 +94,6 @@ public class FeedForward {
     }
 
     public int numberOfSynapses() {
-        // XXX: smarter return inputLayer.length * hiddenLayer.length + 
         int syn = 0;
 
         for (Neuron n: hiddenLayer)
