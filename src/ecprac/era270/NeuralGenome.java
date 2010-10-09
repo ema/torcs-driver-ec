@@ -19,8 +19,6 @@ public class NeuralGenome extends GenericGenome {
             
         NeuralGenome other = (NeuralGenome)o;
 
-        return Arrays.equals(network.inputLayer, other.network.inputLayer) && 
-            Arrays.equals(network.hiddenLayer, other.network.hiddenLayer) && 
-                Arrays.equals(network.outputLayer, other.network.outputLayer);
+        return Arrays.equals(network.getWeights(), other.network.getWeights());
     }
 }
