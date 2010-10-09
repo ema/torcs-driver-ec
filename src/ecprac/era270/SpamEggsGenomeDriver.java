@@ -3,57 +3,20 @@ package ecprac.era270;
 import ecprac.torcs.client.Action;
 import ecprac.torcs.client.SensorModel;
 import ecprac.torcs.controller.GenomeDriver;
-import ecprac.torcs.controller.extras.ABS;
-import ecprac.torcs.controller.extras.AutomatedClutch;
-import ecprac.torcs.controller.extras.AutomatedGearbox;
-import ecprac.torcs.controller.extras.AutomatedRecovering;
 import ecprac.torcs.genome.IGenome;
 
-public class SpamEggsGenomeDriver extends GenomeDriver {
+public class SpamEggsGenomeDriver extends GenericGenomeDriver {
 
 	private int[] speed;
 
-	public void init() {
-		enableExtras(new AutomatedClutch());
-		enableExtras(new AutomatedGearbox());
-		enableExtras(new AutomatedRecovering());
-		enableExtras(new ABS());
-	}
-
 	public void loadGenome(IGenome genome) {
-
 		if (genome instanceof SpamEggsGenome) {
 			SpamEggsGenome llgenome = (SpamEggsGenome) genome;
 			speed = llgenome.speed;
 		} else {
 			System.err.println("Invalid Genome assigned");
 		}
-
 	}
-
-    private double getAccel(int targetSpeed, double curSpeed) {
-        double accel = 0;
-
-        if (targetSpeed - curSpeed > 0)
-            accel = (targetSpeed - curSpeed) / 20;
-
-        if (targetSpeed - curSpeed > 20)
-            accel = 1;
-
-        return accel;
-    }
-
-    private double getBrake(int targetSpeed, double curSpeed) {
-        double brake = 0;
-        
-        if (targetSpeed - curSpeed < 0)
-            brake = - (targetSpeed - curSpeed) / 20;
-
-        if (targetSpeed - curSpeed < - 20)
-            brake = 1;
-
-        return brake;
-    }
 
 	public void control(Action action, SensorModel sensors) {
         int max = 1;
@@ -79,10 +42,5 @@ public class SpamEggsGenomeDriver extends GenomeDriver {
 
 	public String getDriverName() {
 		return "Spam Eggs";
-	}
-
-	public float[] initAngles() {
-		return super.initAngles();
-
 	}
 }
