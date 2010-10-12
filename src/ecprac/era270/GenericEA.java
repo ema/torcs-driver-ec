@@ -85,18 +85,35 @@ abstract class GenericEA<G extends GenericGenome> {
         System.out.println(curEvaluation + " " + best.fitness);
     }
 
-    void run() {
-        initPopulation();
-
-        for (curEvaluation=0; curEvaluation < nRuns; curEvaluation++)
-            evolve();
-
+    private void saveBest(String description) {
         try {
             G best = getBest(1).get(0);
-            Utilities.saveGenome(best, "best-" + algorithmName + ".genome");
+            Utilities.saveGenome(best, 
+                "best-" + algorithmName + "-" + description + ".genome");
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    void run() {
+        initPopulation();
+
+        for (curEvaluation=0; curEvaluation < nRuns; curEvaluation++) {
+            evolve();
+
+            double progress = (double)(curEvaluation / nRuns);
+
+            if (progress == 0.2)
+                saveBest("20");
+
+            if (progress == 0.5)
+                saveBest("50");
+
+            if (progress == 0.7)
+                saveBest("70");
+        }
+
+        saveBest("100");
     }
 }
