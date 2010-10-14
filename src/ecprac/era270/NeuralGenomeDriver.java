@@ -8,6 +8,8 @@ import ecprac.torcs.genome.IGenome;
 public class NeuralGenomeDriver extends GenericGenomeDriver {
     private FeedForward network;
 
+    private int ticksCollision=0, ticksOutside=0;
+
 	public void loadGenome(IGenome genome) {
 		if (genome instanceof NeuralGenome) {
 			NeuralGenome llgenome = (NeuralGenome) genome;
@@ -35,6 +37,12 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
 
         action.accelerate = getAccel((int)wantedSpeed, sensors.getSpeed());
         action.brake = getBrake((int)wantedSpeed, sensors.getSpeed());
+
+        if (sensors.getDamage() > 0)
+            ticksCollision++;
+
+        if (java.lang.Math.abs(sensors.getTrackPosition()) > 1)
+            ticksOutside++;
     }
 
 	public String getDriverName() {
