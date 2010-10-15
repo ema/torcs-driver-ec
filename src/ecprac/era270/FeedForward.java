@@ -7,7 +7,7 @@ interface Component {
     double getOutput();
 }
 
-class Synapse implements Component {
+class Synapse implements Component, java.io.Serializable {
     Neuron source, target;
     double weight;
 
@@ -28,7 +28,7 @@ class Synapse implements Component {
     }
 }
 
-class Neuron implements Component {
+class Neuron implements Component, java.io.Serializable {
     Synapse[] inputSynapses = null;
 
     int id, layer;
@@ -56,7 +56,7 @@ class Neuron implements Component {
     }
 }
 
-public class FeedForward {
+public class FeedForward implements java.io.Serializable {
 
     Neuron[] inputLayer, hiddenLayer, outputLayer; 
 

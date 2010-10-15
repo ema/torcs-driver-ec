@@ -102,16 +102,12 @@ abstract class GenericEA<G extends GenericGenome> {
         for (curEvaluation=0; curEvaluation < nRuns; curEvaluation++) {
             evolve();
 
-            double progress = (double)(curEvaluation / nRuns);
+            double progress = (double)curEvaluation / nRuns;
 
-            if (progress == 0.2)
-                saveBest("20");
+            if (progress == 0.1 || progress == 0.2 ||
+                progress == 0.5 || progress == 0.7)
 
-            if (progress == 0.5)
-                saveBest("50");
-
-            if (progress == 0.7)
-                saveBest("70");
+                saveBest("" + (int)(progress * 10));
         }
 
         saveBest("100");
