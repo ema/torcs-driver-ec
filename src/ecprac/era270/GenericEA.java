@@ -104,8 +104,8 @@ abstract class GenericEA<G extends GenericGenome> {
 
             double progress = (double)curEvaluation / nRuns;
 
-            if (progress == 0.1 || progress == 0.2 ||
-                progress == 0.5 || progress == 0.7)
+            if (progress == 0.05 || progress == 0.1 ||
+                progress == 0.25 || progress == 0.5)
 
                 saveBest("" + (int)(progress * 10));
         }

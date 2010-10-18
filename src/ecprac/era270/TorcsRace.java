@@ -10,20 +10,19 @@ import ecprac.torcs.race.RaceResults;
 import ecprac.torcs.race.Race.Termination;
 import ecprac.torcs.client.Controller.Stage;
 
-// TODO: use generics to change drivers
-public class TorcsRace<G extends GenericGenome> { // extends Thread {
+public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> { // extends Thread {
     public List<G> individuals;
+    private D[] drivers;
     private Random r = new Random();
 
-    public TorcsRace(List<G> individuals) {
+    public TorcsRace(List<G> individuals, D[] drivers) {
         this.individuals = individuals;
+        this.drivers = drivers;
         //start();
         run();
     }
 
     public void run() {
-        NeuralGenomeDriver[] drivers = new NeuralGenomeDriver[individuals.size()];
-
         // Random track
         //Track t = Track.fromIndex(r.nextInt(Track.values().length));
         Track t = Track.fromIndex(3);
@@ -38,7 +37,6 @@ public class TorcsRace<G extends GenericGenome> { // extends Thread {
 
         // Add drivers
         for (int i=0; i<individuals.size(); i++) {
-            drivers[i] = new NeuralGenomeDriver();
             drivers[i].init();
             drivers[i].loadGenome(individuals.get(i));
             race.addCompetitor(drivers[i]);

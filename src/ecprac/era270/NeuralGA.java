@@ -22,7 +22,11 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
 
     List<NeuralGenome> evaluateFitness(List<NeuralGenome> individuals) 
     {
-        return new TorcsRace<NeuralGenome>(individuals).individuals;
+        NeuralGenomeDriver[] drivers = new NeuralGenomeDriver[individuals.size()];
+        for (int i=0; i<individuals.size(); i++)
+            drivers[i] = new NeuralGenomeDriver();
+
+        return new TorcsRace<NeuralGenome,NeuralGenomeDriver>(individuals, drivers).individuals;
     }
 
     private List<NeuralGenome> tournamentSelection() {
