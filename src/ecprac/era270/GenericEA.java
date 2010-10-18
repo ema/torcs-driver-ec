@@ -16,6 +16,8 @@ abstract class GenericEA<G extends GenericGenome> {
     protected Random r = new Random(); 
     // how far we are in the evolutionary process
     protected int curEvaluation;
+    // for how many meters we want to race
+    protected int distance = 1;
 
     // constructor parameters
     protected int populationSize;
@@ -108,6 +110,8 @@ abstract class GenericEA<G extends GenericGenome> {
                 progress == 0.25 || progress == 0.5)
 
                 saveBest("" + (int)(progress * 10));
+
+            distance += 1;
         }
 
         saveBest("100");
