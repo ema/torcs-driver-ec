@@ -25,8 +25,7 @@ public class SpamEggsGenomeDriver extends GenericGenomeDriver {
         super.control(action, sensors);
 
         /* naive overtaking strategy */
-        double opponents[] = sensors.getOpponentSensors();
-        if (opponents[17] < 20 || opponents[18] < 20 || opponents[19] < 20) {
+        if (opponentToOverTake(sensors)) {
             double rand = (double)r.nextInt(6) / 10.0;
 
             if (sensors.getTrackPosition() < 0)

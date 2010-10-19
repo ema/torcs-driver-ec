@@ -61,6 +61,11 @@ abstract class GenericGenomeDriver extends GenomeDriver {
         return max;
     }
 
+    protected boolean opponentToOverTake(SensorModel sensors) {
+        double opponents[] = sensors.getOpponentSensors();
+        return opponents[17] < 20 || opponents[18] < 20 || opponents[19] < 20;
+    }
+
     public void control(Action action, SensorModel sensors) {
         /* basic driving skills */
         int curDirection = headingTowards(sensors);
