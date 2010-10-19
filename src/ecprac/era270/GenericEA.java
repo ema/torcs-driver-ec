@@ -16,8 +16,9 @@ abstract class GenericEA<G extends GenericGenome> {
     protected Random r = new Random(); 
     // how far we are in the evolutionary process
     protected int curEvaluation;
-    // for how many game ticks we want to race
-    protected int ticks = 1000;
+    // for how many meters we want to race
+    protected int meters = 0;
+    private static final int METERS_STEP = 1000;
 
     // constructor parameters
     protected int populationSize;
@@ -84,7 +85,7 @@ abstract class GenericEA<G extends GenericGenome> {
         selectSurvivors();
 
         G best = getBest(1).get(0);
-        System.out.println(curEvaluation + " " + best.fitness);
+        System.out.print(curEvaluation + " " + best.fitness);
     }
 
     private void saveBest(String description) {
@@ -102,14 +103,14 @@ abstract class GenericEA<G extends GenericGenome> {
         initPopulation();
 
         for (curEvaluation=0; curEvaluation < nRuns; curEvaluation++) {
-            evolve();
-
             double progress = (double)curEvaluation / nRuns;
 
-            if (curEvaluation !=0 && 0 == (progress % 0.05)) { 
-                ticks += 1000;
-                System.out.println("Race for " + ticks + " game ticks");
-            }
+            if (0 == (progress % 0.05)) 
+                meters += METERS_STEP;
+
+            long starttime = System.nanoTime();
+            evolve();
+            System.out.println(" " + (System.nanoTime() - starttime));
 
             if (progress == 0.05 || progress == 0.1 ||
                 progress == 0.25 || progress == 0.5)

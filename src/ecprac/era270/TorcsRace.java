@@ -13,13 +13,13 @@ import ecprac.torcs.client.Controller.Stage;
 public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> { // extends Thread {
     public List<G> individuals;
     private D[] drivers;
-    private int ticks;
+    private int meters;
     private Random r = new Random();
 
-    public TorcsRace(List<G> individuals, D[] drivers, int ticks) {
+    public TorcsRace(List<G> individuals, D[] drivers, int meters) {
         this.individuals = individuals;
         this.drivers = drivers;
-        this.ticks = ticks;
+        this.meters = meters;
         //start();
         run();
     }
@@ -35,7 +35,7 @@ public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> {
         race.setStage(Stage.RACE);
         //race.setStage(Stage.QUALIFYING);
         //race.setTermination(Termination.LAPS, 1);
-        race.setTermination(Termination.TICKS, ticks);
+        race.setTermination(Termination.DISTANCE, meters);
 
         // Add drivers
         for (int i=0; i<individuals.size(); i++) {

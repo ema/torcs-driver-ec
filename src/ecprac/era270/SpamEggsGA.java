@@ -26,7 +26,7 @@ public class SpamEggsGA extends GenericEA<SpamEggsGenome> {
         for (int i=0; i<individuals.size(); i++)
             drivers[i] = new SpamEggsGenomeDriver();
 
-        return new TorcsRace<SpamEggsGenome,SpamEggsGenomeDriver>(individuals, drivers, ticks).individuals;
+        return new TorcsRace<SpamEggsGenome,SpamEggsGenomeDriver>(individuals, drivers, meters).individuals;
     }
 
     private List<SpamEggsGenome> tournamentSelection() {
