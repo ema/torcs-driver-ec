@@ -10,9 +10,9 @@ public class SpamEggsGA extends GenericEA<SpamEggsGenome> {
     private static final Random r = new Random();
 
     SpamEggsGA() {
-        super(200, // population size
+        super(100, // population size
               4, // mating pool size
-              1000, // number of evolutionary cycles
+              200, // number of evolutionary cycles
               "Basic genetic algorithm");
     }
 
@@ -26,7 +26,7 @@ public class SpamEggsGA extends GenericEA<SpamEggsGenome> {
         for (int i=0; i<individuals.size(); i++)
             drivers[i] = new SpamEggsGenomeDriver();
 
-        return new TorcsRace<SpamEggsGenome,SpamEggsGenomeDriver>(individuals, drivers, distance).individuals;
+        return new TorcsRace<SpamEggsGenome,SpamEggsGenomeDriver>(individuals, drivers, ticks).individuals;
     }
 
     private List<SpamEggsGenome> tournamentSelection() {

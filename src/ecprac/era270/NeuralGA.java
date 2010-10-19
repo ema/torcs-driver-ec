@@ -11,8 +11,8 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
 
     NeuralGA() {
         super(100, // population size
-              4, // mating pool size
-              1000, // number of evolutionary cycles
+              6, // mating pool size
+              200, // number of evolutionary cycles
               "Neural network algorithm");
     }
 
@@ -26,7 +26,7 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
         for (int i=0; i<individuals.size(); i++)
             drivers[i] = new NeuralGenomeDriver();
 
-        return new TorcsRace<NeuralGenome,NeuralGenomeDriver>(individuals, drivers, distance).individuals;
+        return new TorcsRace<NeuralGenome,NeuralGenomeDriver>(individuals, drivers, ticks).individuals;
     }
 
     private List<NeuralGenome> tournamentSelection() {

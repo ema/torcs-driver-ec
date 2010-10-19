@@ -16,8 +16,8 @@ abstract class GenericEA<G extends GenericGenome> {
     protected Random r = new Random(); 
     // how far we are in the evolutionary process
     protected int curEvaluation;
-    // for how many meters we want to race
-    protected int distance = 1;
+    // for how many game ticks we want to race
+    protected int ticks = 1000;
 
     // constructor parameters
     protected int populationSize;
@@ -106,9 +106,9 @@ abstract class GenericEA<G extends GenericGenome> {
 
             double progress = (double)curEvaluation / nRuns;
 
-            if (0 == (progress % 0.05)) { 
-                distance += 1;
-                System.out.println("Increasing driving distance to: " + distance + " KMs");
+            if (curEvaluation !=0 && 0 == (progress % 0.05)) { 
+                ticks += 1000;
+                System.out.println("Race for " + ticks + " game ticks");
             }
 
             if (progress == 0.05 || progress == 0.1 ||
