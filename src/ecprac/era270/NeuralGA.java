@@ -56,8 +56,8 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
          * One-point crossover of two parents
          */
 
-        double[] weights1 = parent1.network.getWeights();
-        double[] weights2 = parent2.network.getWeights();
+        double[] weights1 = parent1.drivingNetwork.getWeights();
+        double[] weights2 = parent2.drivingNetwork.getWeights();
 
         int arrayLength = weights1.length;
         int crossoverPoint = 1 + r.nextInt(arrayLength - 1);
@@ -82,8 +82,8 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
             child2[i] = weights1[i];
         }
 
-        offsprings[0].network.changeWeights(child1);
-        offsprings[1].network.changeWeights(child2);
+        offsprings[0].drivingNetwork.changeWeights(child1);
+        offsprings[1].drivingNetwork.changeWeights(child2);
 
         return offsprings;
     }
@@ -110,14 +110,14 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
         // Mutation probability
         double p = 0.4;
 
-        double[] weights = individual.network.getWeights();
+        double[] weights = individual.drivingNetwork.getWeights();
 
         for (int i=0; i<weights.length; i++)
             // uniformly distributed value between 0.0 and 1.0
             if (r.nextFloat() > p)
                 weights[i] += value;
             
-        individual.network.changeWeights(weights);
+        individual.drivingNetwork.changeWeights(weights);
         return individual;
     }
 
