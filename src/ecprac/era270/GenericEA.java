@@ -106,12 +106,15 @@ abstract class GenericEA<G extends GenericGenome> {
 
             double progress = (double)curEvaluation / nRuns;
 
+            if (0 == (progress % 0.05)) { 
+                distance += 1;
+                System.out.println("Increasing driving distance to: " + distance + " KMs");
+            }
+
             if (progress == 0.05 || progress == 0.1 ||
                 progress == 0.25 || progress == 0.5)
 
                 saveBest("" + (int)(progress * 10));
-
-            distance += 1;
         }
 
         saveBest("100");
