@@ -12,7 +12,7 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
     NeuralGA() {
         super(100, // population size
               4, // mating pool size
-              100, // number of evolutionary cycles
+              1000, // number of evolutionary cycles
               "Neural network algorithm");
     }
 

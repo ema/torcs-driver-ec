@@ -7,6 +7,10 @@ import ecprac.torcs.client.SensorModel;
 import ecprac.torcs.controller.GenomeDriver;
 import ecprac.torcs.genome.IGenome;
 
+import ecprac.utils.DriversUtils;
+
+import java.lang.Math;
+
 public class NeuralGenomeDriver extends GenericGenomeDriver {
     private FeedForward drivingNetwork;
 
@@ -62,12 +66,22 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
     }
 
 	public void control(Action action, SensorModel sensors) {
+        super.control(action, sensors);
+
+        if (improvedFrontalSensor(sensors) > 190) 
+            return;
+
         changeNetworkInputs(sensors);
 
         double netOutput[] = drivingNetwork.getOutput();
 
-        // deciding how much to steer
-		action.steering = netOutput[1];
+        // steering
+        double steeringAmount = Math.abs(netOutput[1]);
+
+        if (0 < sensors.getTrackPosition())
+    		action.steering = -1 * steeringAmount;
+        else
+    		action.steering = steeringAmount;
 
         // and wanted speed
         double wantedSpeed = 200 * netOutput[0];
@@ -78,7 +92,7 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
         if (sensors.getDamage() > 0)
             ticksCollision++;
 
-        if (java.lang.Math.abs(sensors.getTrackPosition()) > 1)
+        if (Math.abs(sensors.getTrackPosition()) > 1)
             ticksOutside++;
     }
 
