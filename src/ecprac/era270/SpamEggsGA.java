@@ -47,7 +47,7 @@ public class SpamEggsGA extends GenericEA<SpamEggsGenome> {
         /* 
          * Tournament selection of #matingPoolSize individuals
          */
-        return tournamentSelection().subList(tournamentSize - matingPoolSize, tournamentSize - 1);
+        return tournamentSelection().subList(tournamentSize - matingPoolSize, tournamentSize);
     }
 
     private SpamEggsGenome[] crossover(SpamEggsGenome parent1, SpamEggsGenome parent2) 
@@ -81,7 +81,7 @@ public class SpamEggsGA extends GenericEA<SpamEggsGenome> {
     List<SpamEggsGenome> recombine(List<SpamEggsGenome> parents) {
         List<SpamEggsGenome> offsprings = new LinkedList<SpamEggsGenome>();
 
-        for (int i=0; i<parents.size() - 1; i++) 
+        for (int i=0; i<parents.size() - 1; i+=2) 
             for (SpamEggsGenome offspring: crossover(parents.get(i), parents.get(i + 1)))
                 offsprings.add(offspring);
 

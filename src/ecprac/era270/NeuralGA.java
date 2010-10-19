@@ -47,7 +47,7 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
         /* 
          * Tournament selection of #matingPoolSize individuals
          */
-        return tournamentSelection().subList(tournamentSize - matingPoolSize, tournamentSize - 1);
+        return tournamentSelection().subList(tournamentSize - matingPoolSize, tournamentSize);
     }
 
     private NeuralGenome[] crossover(NeuralGenome parent1, NeuralGenome parent2) 
@@ -91,7 +91,7 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
     List<NeuralGenome> recombine(List<NeuralGenome> parents) {
         List<NeuralGenome> offsprings = new LinkedList<NeuralGenome>();
 
-        for (int i=0; i<parents.size() - 1; i++) 
+        for (int i=0; i<parents.size() - 1; i+=2) 
             for (NeuralGenome offspring: crossover(parents.get(i), parents.get(i + 1)))
                 offsprings.add(offspring);
 

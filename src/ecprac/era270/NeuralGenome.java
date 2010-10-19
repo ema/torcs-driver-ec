@@ -11,7 +11,7 @@ public class NeuralGenome extends GenericGenome {
     public FeedForward drivingNetwork = new FeedForward(new double[8], 2);
 
     public String toString() {  
-        return "";
+        return "Fitness: " + fitness;
     }
 
     public boolean equals(Object o) {
