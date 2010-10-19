@@ -22,20 +22,10 @@ public class SpamEggsGenomeDriver extends GenericGenomeDriver {
     }
 
     public void control(Action action, SensorModel sensors) {
-        int max = 1;
-        double edgeSensors[] = sensors.getTrackEdgeSensors();
-        double opponents[] = sensors.getOpponentSensors();
-
-
-        /* finding out the position of the largest distance vector */
-        for (int i=1; i < edgeSensors.length - 1; i++)
-            if (edgeSensors[i] >= edgeSensors[max]) 
-                max = i;
-
-        double steeringAmount = 0.1 * max - 0.9;
-        action.steering = steeringAmount;
+        super.control(action, sensors);
 
         /* naive overtaking strategy */
+        double opponents[] = sensors.getOpponentSensors();
         if (opponents[17] < 20 || opponents[18] < 20 || opponents[19] < 20) {
             double rand = (double)r.nextInt(6) / 10.0;
 
@@ -45,8 +35,10 @@ public class SpamEggsGenomeDriver extends GenericGenomeDriver {
                 action.steering -= rand;
         }
 
-        // 9 - (max % 9)
-        int speedIdx = max;
+        int curDirection = headingTowards(sensors);
+
+        // 9 - (curDirection % 9)
+        int speedIdx = curDirection;
         if (speedIdx >= speed.length) {
             speedIdx = 9 - (speedIdx % 9);
         }

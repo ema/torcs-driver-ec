@@ -9,10 +9,13 @@ import ecprac.torcs.controller.extras.AutomatedGearbox;
 import ecprac.torcs.controller.extras.AutomatedRecovering;
 import ecprac.torcs.genome.IGenome;
 
+import ecprac.utils.DriversUtils;
+
+import java.lang.Math;
+
 abstract class GenericGenomeDriver extends GenomeDriver {
 
 	public abstract void loadGenome(IGenome genome);
-	public abstract void control(Action action, SensorModel sensors);
 	public abstract String getDriverName();
 
 	public void init() {
@@ -44,6 +47,48 @@ abstract class GenericGenomeDriver extends GenomeDriver {
             brake = 1;
 
         return brake;
+    }
+
+    protected int headingTowards(SensorModel sensors) {
+        int max = 1;
+        double edgeSensors[] = sensors.getTrackEdgeSensors();
+
+        /* finding out the position of the largest distance vector */
+        for (int i=1; i < edgeSensors.length - 1; i++)
+            if (edgeSensors[i] >= edgeSensors[max]) 
+                max = i;
+
+        return max;
+    }
+
+    public void control(Action action, SensorModel sensors) {
+        /* basic driving skills */
+        int curDirection = headingTowards(sensors);
+        
+        action.steering = 0.1 * curDirection - 0.9;
+
+        Double nextCorner = Math.abs(DriversUtils.sharpnessOfNextCorner(sensors));
+
+        if (nextCorner.isNaN() || nextCorner == 0) {
+            action.accelerate = 1;
+            action.brake = 0;
+        }
+        else {
+            double curSpeed = sensors.getSpeed();
+            int targetSpeed = (int)curSpeed;
+
+            if (nextCorner >= 20)
+                targetSpeed = 110;
+
+            if (nextCorner >= 50)
+                targetSpeed = 70;
+
+            if (nextCorner >= 80)
+                targetSpeed = 40;
+
+            action.accelerate = getAccel(targetSpeed, curSpeed);
+            action.brake = getBrake(targetSpeed, curSpeed);
+        }
     }
 
 	public float[] initAngles() {
