@@ -85,7 +85,7 @@ abstract class GenericEA<G extends GenericGenome> {
         selectSurvivors();
 
         G best = getBest(1).get(0);
-        System.out.print(curEvaluation + " " + best.fitness);
+        System.out.println(curEvaluation + " " + best.fitness);
     }
 
     private void saveBest(String description) {
@@ -108,9 +108,7 @@ abstract class GenericEA<G extends GenericGenome> {
             if (0 == (progress % 0.05)) 
                 meters += METERS_STEP;
 
-            long starttime = System.nanoTime();
             evolve();
-            System.out.println(" " + (System.nanoTime() - starttime));
 
             if (progress == 0.05 || progress == 0.1 ||
                 progress == 0.25 || progress == 0.5)
