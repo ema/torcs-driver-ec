@@ -10,9 +10,9 @@ public class NeuralGA extends GenericEA<NeuralGenome> {
     private static final Random r = new Random();
 
     NeuralGA() {
-        super(100, // population size
-              6, // mating pool size
-              200, // number of evolutionary cycles
+        super(50, // population size
+              4, // mating pool size
+              100, // number of evolutionary cycles
               "Neural network algorithm");
     }
 
