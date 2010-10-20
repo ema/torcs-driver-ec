@@ -15,6 +15,9 @@ import java.lang.Math;
 
 abstract class GenericGenomeDriver extends GenomeDriver {
 
+    public int ticksOutside = 0;
+    public int ticksCollision = 0;
+
 	public abstract void loadGenome(IGenome genome);
 	public abstract String getDriverName();
 
@@ -67,6 +70,13 @@ abstract class GenericGenomeDriver extends GenomeDriver {
     }
 
     public void control(Action action, SensorModel sensors) {
+        // collision and out of track counters
+        if (sensors.getDamage() > 0)
+            ticksCollision++;
+
+        if (Math.abs(sensors.getTrackPosition()) > 1)
+            ticksOutside++;
+
         /* basic driving skills */
         int curDirection = headingTowards(sensors);
         

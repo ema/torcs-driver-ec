@@ -25,17 +25,22 @@ public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> {
     }
 
     public void run() {
-        // Random track
         //Track t = Track.fromIndex(r.nextInt(Track.values().length));
+        /* Random track
+        Track t;
+        if (r.nextBoolean())
+            t = Track.fromIndex(2);
+        else*/
         Track t = Track.fromIndex(3);
+
         //System.out.println("Evaluating on track " + t);
         
         Race race = new Race();
         race.setTrack(t);
         race.setStage(Stage.RACE);
         //race.setStage(Stage.QUALIFYING);
-        //race.setTermination(Termination.LAPS, 1);
-        race.setTermination(Termination.DISTANCE, meters);
+        race.setTermination(Termination.LAPS, 1);
+        //race.setTermination(Termination.DISTANCE, meters);
 
         // Add drivers
         for (int i=0; i<individuals.size(); i++) {
@@ -49,7 +54,18 @@ public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> {
 
         for (int i=0; i<individuals.size(); i++) {
             RaceResult result = results.get(drivers[i]);
-            individuals.get(i).fitness = result.distance / result.time;
+
+            double averageSpeed = 1000 * (result.distance / result.time);
+            double outsidePenalty = drivers[i].ticksOutside / 1000.0;
+            double collisionPenalty = drivers[i].ticksCollision / 10000.0;
+
+            double fitness = averageSpeed - outsidePenalty - collisionPenalty;
+
+            /*
+            System.out.println(averageSpeed + " " + outsidePenalty + " " + collisionPenalty);
+            System.out.println(i + " " + fitness);
+            */
+            individuals.get(i).fitness = fitness;
         }
     }
 }
