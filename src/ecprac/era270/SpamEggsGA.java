@@ -10,9 +10,9 @@ public class SpamEggsGA extends GenericEA<SpamEggsGenome> {
     private static final Random r = new Random();
 
     SpamEggsGA() {
-        super(100, // population size
+        super(200, // population size
               4, // mating pool size
-              200, // number of evolutionary cycles
+              100, // number of evolutionary cycles
               "Basic genetic algorithm");
     }
 
