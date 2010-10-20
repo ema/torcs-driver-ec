@@ -14,8 +14,6 @@ import java.lang.Math;
 public class NeuralGenomeDriver extends GenericGenomeDriver {
     private FeedForward drivingNetwork;
 
-    private int ticksCollision=0, ticksOutside=0;
-
 	public void loadGenome(IGenome genome) {
 		if (genome instanceof NeuralGenome) {
 			NeuralGenome llgenome = (NeuralGenome) genome;
@@ -68,32 +66,18 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
 	public void control(Action action, SensorModel sensors) {
         super.control(action, sensors);
 
-        if (improvedFrontalSensor(sensors) > 190) 
+        if (improvedFrontalSensor(sensors) > 100) 
             return;
 
         changeNetworkInputs(sensors);
 
         double netOutput[] = drivingNetwork.getOutput();
 
-        // steering
-        double steeringAmount = Math.abs(netOutput[1]);
-
-        if (0 < sensors.getTrackPosition())
-    		action.steering = -1 * steeringAmount;
-        else
-    		action.steering = steeringAmount;
-
         // and wanted speed
         double wantedSpeed = 200 * netOutput[0];
 
         action.accelerate = getAccel((int)wantedSpeed, sensors.getSpeed());
         action.brake = getBrake((int)wantedSpeed, sensors.getSpeed());
-
-        if (sensors.getDamage() > 0)
-            ticksCollision++;
-
-        if (Math.abs(sensors.getTrackPosition()) > 1)
-            ticksOutside++;
     }
 
 	public String getDriverName() {
