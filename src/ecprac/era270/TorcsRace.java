@@ -11,7 +11,7 @@ import ecprac.torcs.race.Race.Termination;
 import ecprac.torcs.client.Controller.Stage;
 
 public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> { // extends Thread {
-    private static boolean useGUI = true;
+    public static boolean useGUI = true;
 
     public List<G> individuals;
     private D[] drivers;
@@ -27,12 +27,7 @@ public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> {
     }
 
     public void run() {
-        //Track t = Track.fromIndex(r.nextInt(Track.values().length));
-        /* Random track
-        Track t;
-        if (r.nextBoolean())
-            t = Track.fromIndex(2);
-        else*/
+        // TODO: allow to switch between fixed and random track selection
         Track t = Track.fromIndex(3);
 
         //System.out.println("Evaluating on track " + t);
