@@ -11,6 +11,8 @@ import ecprac.torcs.race.Race.Termination;
 import ecprac.torcs.client.Controller.Stage;
 
 public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> { // extends Thread {
+    private static boolean useGUI = true;
+
     public List<G> individuals;
     private D[] drivers;
     private int meters;
@@ -49,8 +51,11 @@ public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> {
             race.addCompetitor(drivers[i]);
         }
         
-        RaceResults results = race.run();
-        //RaceResults results = race.runWithGUI();
+        RaceResults results;
+        if (useGUI)
+            results = race.runWithGUI();
+        else
+            results = race.run();
 
         for (int i=0; i<individuals.size(); i++) {
             RaceResult result = results.get(drivers[i]);
