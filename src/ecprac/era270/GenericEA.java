@@ -18,7 +18,7 @@ abstract class GenericEA<G extends GenericGenome> {
     protected int curEvaluation;
     // for how many meters we want to race
     protected int meters = 0;
-    private static final int METERS_STEP = 1000;
+    private static final int METERS_STEP = 500;
 
     // constructor parameters
     protected int populationSize;

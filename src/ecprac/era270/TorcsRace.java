@@ -36,8 +36,8 @@ public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> {
         race.setTrack(t);
         race.setStage(Stage.RACE);
         //race.setStage(Stage.QUALIFYING);
-        race.setTermination(Termination.LAPS, 1);
-        //race.setTermination(Termination.DISTANCE, meters);
+        //race.setTermination(Termination.LAPS, 1);
+        race.setTermination(Termination.DISTANCE, meters);
 
         // Add drivers
         for (int i=0; i<individuals.size(); i++) {
