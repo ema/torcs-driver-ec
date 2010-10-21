@@ -55,12 +55,11 @@ public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> {
         for (int i=0; i<individuals.size(); i++) {
             RaceResult result = results.get(drivers[i]);
 
-            double averageSpeed = 1000 * (result.distance / result.time);
+            double averageSpeed = result.distance / result.time;
             double outsidePenalty = drivers[i].ticksOutside / 1000.0;
             double collisionPenalty = drivers[i].ticksCollision / 10000.0;
 
             double fitness = averageSpeed - outsidePenalty - collisionPenalty;
-
             /*
             System.out.println(averageSpeed + " " + outsidePenalty + " " + collisionPenalty);
             System.out.println(i + " " + fitness);
