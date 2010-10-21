@@ -17,9 +17,6 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
     // very useful
     private static int USE_EA_METERS = 100;
 
-    // XXX: useful?
-    private static int EDGE_SENSORS_SCALE_UP = 3;
-
 	public void loadGenome(IGenome genome) {
 		if (genome instanceof NeuralGenome) {
 			NeuralGenome llgenome = (NeuralGenome) genome;
@@ -30,7 +27,6 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
 	}
 
     private double[] trimmedEdgeSensors(SensorModel sensors) {
-        // XXX: maybe it's better to feed the ANN with ALL the available sensors?
         double edgeSensors[] = sensors.getTrackEdgeSensors();
         double[] trimmedSensors = new double[5];
 
@@ -45,8 +41,7 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
         double frontal[] = new double[3];
 
         for (int i=0; i<3; i++)
-            // very important! scale up input
-            frontal[i] = edgeSensors[7+i] * EDGE_SENSORS_SCALE_UP;
+            frontal[i] = edgeSensors[7+i]; 
 
         Arrays.sort(frontal);
 
@@ -82,8 +77,7 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
 
         double netOutput[] = drivingNetwork.getOutput();
 
-        // let's steer, in ANN we trust
-        action.steering = netOutput[0];
+        //action.steering = netOutput[0];
 
         // let's see what our buddy thinks about accelerating / braking
         double accBrakeAction = netOutput[1];
@@ -95,15 +89,9 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
             action.accelerate = 0;
             action.brake = accBrakeAction;
         }
-        /*
-        double wantedSpeed = 200 * netOutput[0];
-
-        action.accelerate = getAccel((int)wantedSpeed, sensors.getSpeed());
-        action.brake = getBrake((int)wantedSpeed, sensors.getSpeed());
-        */
     }
 
 	public String getDriverName() {
-		return "Neural Driver";
+		return "Una faccia mia ratsa";
 	}
 }
