@@ -26,7 +26,7 @@
 	<target name="jar" depends="compile" description="Create a jar file">
 		<jar destfile="${target-dir}/${jarfile}" basedir="${tmp-dir}" includes="**/*.*">
 			<manifest> 
-				<attribute name="Main-Class" value="ecprac.era270.SpamEggsLauncher" /> 
+				<attribute name="Main-Class" value="ecprac.era270.EntryPoint" /> 
 				<attribute name="Class-Path" value=". ECPRAC-TORCS.jar" />
 			</manifest>
 		</jar>
