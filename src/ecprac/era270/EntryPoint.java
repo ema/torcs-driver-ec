@@ -29,9 +29,10 @@ public class EntryPoint {
             d.init();
             d.loadGenome(best);
             r.addCompetitor(d);
-            r.runWithGUI();
         }
         catch (Exception E) {System.out.println(E);}
+
+        r.runWithGUI();
     }
 
     private static void showRandom(int n) {
@@ -43,11 +44,13 @@ public class EntryPoint {
             d.init();
             d.loadGenome(driver);
             r.addCompetitor(d);
-            r.runWithGUI();
         }
+        r.runWithGUI();
     }
     
     public static void main(String[] args) {
+        // TODO: use command line arguments
+
         // Change the constructor call to select a different EA
         //new SpamEggsGA().run();
         new NeuralGA().run();

@@ -11,7 +11,7 @@ import ecprac.torcs.race.Race.Termination;
 import ecprac.torcs.client.Controller.Stage;
 
 public class TorcsRace<G extends GenericGenome, D extends GenericGenomeDriver> { // extends Thread {
-    public static boolean useGUI = true;
+    public static boolean useGUI = false;
 
     public List<G> individuals;
     private D[] drivers;
