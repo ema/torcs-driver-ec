@@ -114,8 +114,6 @@ abstract class GenericEA<G extends GenericGenome> {
                 progress == 0.25 || progress == 0.5)
 
                 saveBest("" + (int)(progress * 10));
-
-            saveBest("EVALUATION-" + curEvaluation);
         }
 
         saveBest("100");
