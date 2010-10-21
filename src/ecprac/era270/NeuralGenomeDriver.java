@@ -14,6 +14,12 @@ import java.lang.Math;
 public class NeuralGenomeDriver extends GenericGenomeDriver {
     private FeedForward drivingNetwork;
 
+    // very useful
+    private static int USE_EA_METERS = 100;
+
+    // XXX: useful?
+    private static int EDGE_SENSORS_SCALE_UP = 3;
+
 	public void loadGenome(IGenome genome) {
 		if (genome instanceof NeuralGenome) {
 			NeuralGenome llgenome = (NeuralGenome) genome;
@@ -24,6 +30,7 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
 	}
 
     private double[] trimmedEdgeSensors(SensorModel sensors) {
+        // XXX: maybe it's better to feed the ANN with ALL the available sensors?
         double edgeSensors[] = sensors.getTrackEdgeSensors();
         double[] trimmedSensors = new double[5];
 
@@ -38,7 +45,8 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
         double frontal[] = new double[3];
 
         for (int i=0; i<3; i++)
-            frontal[i] = edgeSensors[7+i];
+            // very important! scale up input
+            frontal[i] = edgeSensors[7+i] * EDGE_SENSORS_SCALE_UP;
 
         Arrays.sort(frontal);
 
@@ -55,7 +63,7 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
         for (; i<edgeSensors.length; i++)
             drivingNetworkInput[i] = edgeSensors[i];
 
-        // normalized track pos
+        // normalized track pos XXX: is it useful?
         drivingNetworkInput[i] = 200 * sensors.getTrackPosition();
         drivingNetworkInput[i+1] = sensors.getSpeed();
         drivingNetworkInput[i+2] = improvedFrontalSensor(sensors);
@@ -66,18 +74,33 @@ public class NeuralGenomeDriver extends GenericGenomeDriver {
 	public void control(Action action, SensorModel sensors) {
         super.control(action, sensors);
 
-        if (improvedFrontalSensor(sensors) > 100) 
+        if (improvedFrontalSensor(sensors) > USE_EA_METERS) 
+            // We DO NOT use the ANN. See GenericGenomeDriver.control
             return;
 
         changeNetworkInputs(sensors);
 
         double netOutput[] = drivingNetwork.getOutput();
 
-        // and wanted speed
+        // let's steer, in ANN we trust
+        action.steering = netOutput[0];
+
+        // let's see what our buddy thinks about accelerating / braking
+        double accBrakeAction = netOutput[1];
+        if (accBrakeAction > 0) {
+            action.accelerate = accBrakeAction;
+            action.brake = 0;
+        }
+        else {
+            action.accelerate = 0;
+            action.brake = accBrakeAction;
+        }
+        /*
         double wantedSpeed = 200 * netOutput[0];
 
         action.accelerate = getAccel((int)wantedSpeed, sensors.getSpeed());
         action.brake = getBrake((int)wantedSpeed, sensors.getSpeed());
+        */
     }
 
 	public String getDriverName() {
